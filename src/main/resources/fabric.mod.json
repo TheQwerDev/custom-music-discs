@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "id": "examplemod",
+  "id": "custommusicdiscs",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This mod aims to help new BTA modders.",
+  "name": "Custom Music Discs",
+  "description": "romanian church music included",
   "authors": [
-    "Turnip Labs"
+    "TheQwerDev"
   ],
   "contact": {
     "homepage": "",
@@ -18,11 +18,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-        "turniplabs.examplemod.ExampleMod"
+        "theqwerdev.custommusicdiscs.CustomMusicDiscsMod"
     ]
   },
   "mixins": [
-      "examplemod.mixins.json"
+    "custommusicdiscs.mixins.json"
   ],
 
   "depends": {
