@@ -10,7 +10,7 @@ public class DiscItems {
 
 	public void InitializeItems() {
 		disc1 = ItemHelper.createItem(CustomMusicDiscsMod.MOD_ID,
-			new ItemCustomRecord("record.lobotomy", 16550, "lobotomy"), "lobotomy", "disc1.png");
+			new ItemCustomRecord("record.church1", 16550, "Cantarile I si III, ectenia intreita"), "church1", "disc1.png");
 	}
 
 }

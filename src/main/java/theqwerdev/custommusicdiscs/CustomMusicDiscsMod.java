@@ -12,9 +12,9 @@ public class CustomMusicDiscsMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("your wallet has been stolen");
+        LOGGER.info("Custom Music Discs initialized.");
 
-		SoundHelper.addStreaming(MOD_ID, "lobotomy.ogg");
+		SoundHelper.addStreaming(MOD_ID, "Cantarile I si III, ectenia intreita.ogg");
 		new DiscItems().InitializeItems();
     }
 }
