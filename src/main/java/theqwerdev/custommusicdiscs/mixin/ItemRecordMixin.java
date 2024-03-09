@@ -4,14 +4,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.RenderGlobal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-
+import java.util.Arrays;
 
 @Mixin(value=RenderGlobal.class, remap=false)
 public class ItemRecordMixin {
+
+	@Unique
+	String[] ost = {"13", "cat", "blocks", "chirp", "far", "mall", "mellohi", "stal", "strad", "ward", "wait", "dog"};
 
 	@Shadow
 	private Minecraft mc;
@@ -20,10 +24,10 @@ public class ItemRecordMixin {
 	public void playStreamingMusic(String soundPath, int x, int y, int z, CallbackInfo ci)
 	{
 		if (soundPath != null) {
-			if(soundPath.equals("Cantarile I si III, ectenia intreita"))
-				mc.ingameGUI.setRecordPlayingMessage("Cantarile I si III, ectenia intreita");
-			else
+			if(Arrays.asList(ost).contains(soundPath))
 				mc.ingameGUI.setRecordPlayingMessage("C418 - " + soundPath);
+			else
+				mc.ingameGUI.setRecordPlayingMessage(soundPath);
 		}
 		mc.sndManager.playStreaming(soundPath, x, y, z, 1.0f, 1.0f);
 		ci.cancel();
