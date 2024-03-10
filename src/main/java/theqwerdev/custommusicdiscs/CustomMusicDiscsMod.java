@@ -3,8 +3,7 @@ package theqwerdev.custommusicdiscs;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import theqwerdev.custommusicdiscs.item.DiscItems;
-import turniplabs.halplibe.helper.SoundHelper;
+import theqwerdev.custommusicdiscs.item.MusicDiscAdder;
 
 public class CustomMusicDiscsMod implements ModInitializer {
     public static final String MOD_ID = "custommusicdiscs";
@@ -12,9 +11,9 @@ public class CustomMusicDiscsMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Custom Music Discs initialized.");
+		//SoundHelper.addStreaming(MOD_ID, "Cantarile I si III, ectenia intreita.ogg");
+		new MusicDiscAdder().InitializeItems();
 
-		SoundHelper.addStreaming(MOD_ID, "Cantarile I si III, ectenia intreita.ogg");
-		new DiscItems().InitializeItems();
+		LOGGER.info("Custom Music Discs initialized.");
     }
 }

@@ -6,7 +6,7 @@
     "mixins": [
     ],
     "client": [
-      "ItemRecordMixin"
+      "RenderGlobalMixin"
     ],
     "injectors": {
         "defaultRequire": 1
