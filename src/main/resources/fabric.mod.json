@@ -4,7 +4,7 @@
   "version": "${version}",
 
   "name": "Custom Music Discs",
-  "description": "This mod allows you to add new songs to play on your jukebox! It was initially developed to play romanian church music in a server made by me!\n(romanian church music not included by default)",
+  "description": "This mod allows you to add new songs to play on your jukebox!",
   "authors": [
     "TheQwerDev"
   ],

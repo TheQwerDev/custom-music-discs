@@ -10,9 +10,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 
-@Mixin(value= net.minecraft.client.render.RenderGlobal.class, remap=false)
+@Mixin(value=net.minecraft.client.render.RenderGlobal.class, remap=false)
 public class RenderGlobalMixin {
-
 	@Unique
 	String[] ost = {"13", "cat", "blocks", "chirp", "far", "mall", "mellohi", "stal", "strad", "ward", "wait", "dog"};
 
@@ -22,7 +21,6 @@ public class RenderGlobalMixin {
 	@Inject(at = @At("HEAD"), method = "playStreamingMusic", cancellable = true)
 	public void playStreamingMusic(String soundPath, int x, int y, int z, CallbackInfo ci)
 	{
-		//MinecraftServer.getInstance().serverCommandHandler.getPlayer("andreiqwer").remove();
 		if (soundPath != null) {
 			if(Arrays.asList(ost).contains(soundPath))
 				mc.ingameGUI.setRecordPlayingMessage("C418 - " + soundPath);
