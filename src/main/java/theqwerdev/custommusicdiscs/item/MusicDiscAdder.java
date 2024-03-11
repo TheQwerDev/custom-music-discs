@@ -66,7 +66,7 @@ public class MusicDiscAdder {
 						name = name.substring(0, extPos);
 
 						discs.add(ItemHelper.createItem(CustomMusicDiscsMod.MOD_ID,
-							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name), "disc_gold.png"));
+							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, "Custom Music Disc"), "disc_gold.png"));
 
 						try {
 							Path tempPath = Files.copy(musicFile.toPath(), Paths.get(SoundHelper.streamingDirectory.getPath(), musicFile.getName()));
