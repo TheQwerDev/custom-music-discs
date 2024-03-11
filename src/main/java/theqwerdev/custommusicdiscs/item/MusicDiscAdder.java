@@ -7,13 +7,15 @@ import turniplabs.halplibe.helper.ItemHelper;
 import turniplabs.halplibe.helper.SoundHelper;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Properties;
 
 public class MusicDiscAdder {
+	public static Properties dynLang;
 	static int startingID = CustomMusicDiscsConfig.itemID;
 	static Path musicPath = Paths.get(CustomMusicDiscsConfig.musicPath);
 	static String[] exts = {".ogg", ".wav", ".mus"};
@@ -32,14 +34,25 @@ public class MusicDiscAdder {
 					if(name.toLowerCase().endsWith(ext)) {
 						return true;
 					}
-				CustomMusicDiscsMod.LOGGER.warn("Discarding '" + name + "'... (Invalid file extension)");
+				if(dir.isFile())
+					CustomMusicDiscsMod.LOGGER.warn("Discarding '" + name + "'... (Invalid file extension)");
 				return false;
 			});
 
 			if(musicFiles != null && musicFiles.length > 0) {
 				if(CustomMusicDiscsMod.isClient) {
-					File langFile = new File(Objects.requireNonNull(getClass().getResource("/lang/" + CustomMusicDiscsMod.MOD_ID + "/en_US.lang")).getPath()); //yeah, this sucks
+					//CustomMusicDiscsMod.LOGGER.warn(getClass().getResource("/lang/" + CustomMusicDiscsMod.MOD_ID + "/en_US.lang").getPath());
+					//File langFile = new File(Objects.requireNonNull(getClass().getResource("/lang/" + CustomMusicDiscsMod.MOD_ID + "/en_US.lang")).getPath()); //yeah, this sucks
 
+					Path langPath = Paths.get(musicPath + "/dynamic_lang/en_US.lang");
+
+					try {
+						Files.createDirectories(langPath);
+					} catch (IOException e) {
+						CustomMusicDiscsMod.LOGGER.warn(e.toString());
+					}
+
+					File langFile = new File(langPath.toString());
 					langFile.delete();
 					try {
 						langFile.createNewFile();
@@ -65,6 +78,15 @@ public class MusicDiscAdder {
 							fw.write("item." + CustomMusicDiscsMod.MOD_ID + ".record.custom" + discs.size() + ".name=Custom Music Disc\n" +
 								"item." + CustomMusicDiscsMod.MOD_ID + ".record.custom" + discs.size() + ".desc=" + name + "\n\n");
 							fw.close();
+
+							dynLang = new Properties();
+							InputStream stream = Files.newInputStream(langPath);
+							InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+							try {
+								dynLang.load(reader);
+							} catch (IOException e) {
+								throw new RuntimeException(e);
+							}
 						} catch (IOException e) {
 							CustomMusicDiscsMod.LOGGER.warn(e.toString());
 						}
