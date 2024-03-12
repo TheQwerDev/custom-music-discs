@@ -6,7 +6,8 @@
     "mixins": [
     ],
     "client": [
-      "RenderGlobalMixin"
+      "RenderGlobalMixin",
+      "I18nMixin"
     ],
     "injectors": {
         "defaultRequire": 1
