@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import theqwerdev.custommusicdiscs.item.MusicDiscAdder;
+import turniplabs.halplibe.helper.SoundHelper;
 
 public class CustomMusicDiscsMod implements ModInitializer {
     public static final String MOD_ID = "custommusicdiscs";
@@ -15,7 +16,7 @@ public class CustomMusicDiscsMod implements ModInitializer {
     @Override
     public void onInitialize() {
 		new MusicDiscAdder().InitializeItems();
-
+		SoundHelper.Client.addStreaming(MOD_ID, "placeholder.wav"); //aww fiddlesticks, what now?!
 		LOGGER.info("Custom Music Discs initialized.");
     }
 }
