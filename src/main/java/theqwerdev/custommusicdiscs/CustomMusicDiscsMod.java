@@ -16,7 +16,7 @@ public class CustomMusicDiscsMod implements ModInitializer {
     @Override
     public void onInitialize() {
 		new MusicDiscAdder().InitializeItems();
-		SoundHelper.Client.addStreaming(MOD_ID, "placeholder.wav"); //aww fiddlesticks, what now?!
+		SoundHelper.Client.addStreaming(MOD_ID, "placeholder.ogg"); //aww fiddlesticks, what now?!
 		LOGGER.info("Custom Music Discs initialized.");
     }
 }
