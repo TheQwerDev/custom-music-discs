@@ -3,6 +3,7 @@ package theqwerdev.custommusicdiscs.item;
 import net.minecraft.core.item.Item;
 import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.CustomMusicDiscsMod;
+import turniplabs.halplibe.helper.CreativeHelper;
 import turniplabs.halplibe.helper.ItemHelper;
 import turniplabs.halplibe.helper.SoundHelper;
 

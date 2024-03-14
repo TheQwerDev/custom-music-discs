@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 
-@Mixin(value=net.minecraft.client.render.RenderGlobal.class, remap=false)
+@Mixin(value = net.minecraft.client.render.RenderGlobal.class, remap = false)
 public class RenderGlobalMixin {
 	@Unique
 	String[] ost = {"13", "cat", "blocks", "chirp", "far", "mall", "mellohi", "stal", "strad", "ward", "wait", "dog"};
