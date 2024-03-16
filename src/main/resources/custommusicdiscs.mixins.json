@@ -7,8 +7,7 @@
     ],
     "client": [
       "RenderGlobalMixin",
-      "I18nMixin",
-      "Packet102WindowClickMixin"
+      "I18nMixin"
     ],
     "injectors": {
         "defaultRequire": 1

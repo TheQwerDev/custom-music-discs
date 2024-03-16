@@ -3,7 +3,6 @@ package theqwerdev.custommusicdiscs.item;
 import net.minecraft.core.item.Item;
 import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.CustomMusicDiscsMod;
-import turniplabs.halplibe.helper.CreativeHelper;
 import turniplabs.halplibe.helper.ItemHelper;
 import turniplabs.halplibe.helper.SoundHelper;
 
@@ -46,7 +45,7 @@ public class MusicDiscAdder {
 
 						if(discs.size() < maxDiscCount) {
 							discs.add(ItemHelper.createItem(CustomMusicDiscsMod.MOD_ID,
-								new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, "Custom Music Disc"), "disc_gold.png"));
+								new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, "Custom Music Disc"), "disc_gold.png").setNotInCreativeMenu());
 						}
 						else {
 							CustomMusicDiscsMod.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '" + musicFile.getName() + '\'');
