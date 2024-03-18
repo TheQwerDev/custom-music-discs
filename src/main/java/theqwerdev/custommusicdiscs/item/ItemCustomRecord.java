@@ -8,7 +8,7 @@ public class ItemCustomRecord
 	public String translatedName;
 	public String translatedDesc;
 
-	protected ItemCustomRecord(String name, int id, String s, String displayName) {
+	public ItemCustomRecord(String name, int id, String s, String displayName) {
 		super(name, id, s);
 		translatedName = displayName;
 		translatedDesc = s;

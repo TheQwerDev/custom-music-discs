@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "id": "custommusicdiscs",
   "version": "${version}",
+	"icon": "assets/custommusicdiscs/icon.png",
 
   "name": "Custom Music Discs",
   "description": "This mod allows you to add new songs to play on your jukebox!",
@@ -17,16 +18,20 @@
 
   "environment": "*",
   "entrypoints": {
-    "main": [
-        "theqwerdev.custommusicdiscs.CustomMusicDiscsMod"
-    ]
+    "client": [
+			"theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient"
+    ],
+		"server": [
+			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
+		]
   },
   "mixins": [
     "custommusicdiscs.mixins.json"
   ],
 
   "depends": {
-    "fabricloader": ">=0.13.3"
+    "fabricloader": ">=0.13.3",
+		"halplibe": ">=3.4.14"
   },
   "suggests": {
   }

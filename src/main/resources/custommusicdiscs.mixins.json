@@ -4,10 +4,10 @@
     "package": "theqwerdev.custommusicdiscs.mixin",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
+      "I18nMixin"
     ],
     "client": [
-      "RenderGlobalMixin",
-      "I18nMixin"
+      "RenderGlobalMixin"
     ],
     "injectors": {
         "defaultRequire": 1
