@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
+import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.item.ItemCustomRecord;
 
 @Mixin(value = I18n.class, remap = false)
@@ -19,7 +20,7 @@ public class I18nMixin {
 			if(s.endsWith("name"))
 				cir.setReturnValue(record.translatedName);
 			else if(s.endsWith("desc"))
-				cir.setReturnValue(record.translatedDesc);
+				cir.setReturnValue(CustomMusicDiscsConfig.useSongAsItemName ? "Custom Music Disc" : record.translatedDesc);
 		}
 	}
 }

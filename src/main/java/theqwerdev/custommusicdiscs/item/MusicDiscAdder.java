@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class MusicDiscAdder {
 	public static int maxDiscCount = 256;
 	public static int startingID = CustomMusicDiscsConfig.itemID;
+	static boolean useSongAsItemName = CustomMusicDiscsConfig.useSongAsItemName;
 	static Path musicPath = Paths.get(CustomMusicDiscsConfig.musicPath);
 	static String[] exts = {".ogg", ".wav", ".mus"};
 
@@ -44,7 +45,7 @@ public class MusicDiscAdder {
 
 					if(discs.size() < maxDiscCount) {
 						discs.add(ItemHelper.createItem(CustomMusicDiscsClient.MOD_ID,
-							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, "Custom Music Disc"), "disc_gold.png"));
+							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, (useSongAsItemName ? name : "Custom Music Disc")), "disc_gold.png"));
 					}
 					else {
 						CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '" + musicFile.getName() + '\'');
