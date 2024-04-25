@@ -4,7 +4,9 @@
     "package": "theqwerdev.custommusicdiscs.mixin",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
-      "I18nMixin"
+      "I18nMixin",
+      "WorldFeatureDungeonMixin",
+      "WorldFeatureLabyrinthMixin"
     ],
     "client": [
       "RenderGlobalMixin"
