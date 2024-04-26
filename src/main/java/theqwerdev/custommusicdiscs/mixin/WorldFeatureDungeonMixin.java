@@ -15,6 +15,6 @@ import java.util.Random;
 public class WorldFeatureDungeonMixin {
 	@Inject(method = "pickCheckLootItem", at = @At(value = "RETURN", ordinal = 10), cancellable = true)
 	private void includeCustomDiscs(Random random, CallbackInfoReturnable<ItemStack> cir) {
-		cir.setReturnValue(new ItemStack(random.nextInt(2) == 0 ? Item.itemsList[Item.record13.id + random.nextInt(9)] : Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)]));
+		cir.setReturnValue(new ItemStack(random.nextInt(2) == 0 || !CustomMusicDiscsConfig.doLootgen ? Item.itemsList[Item.record13.id + random.nextInt(9)] : Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)]));
 	}
 }

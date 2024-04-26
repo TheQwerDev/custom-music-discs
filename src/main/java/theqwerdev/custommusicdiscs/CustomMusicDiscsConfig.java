@@ -14,6 +14,7 @@ public class CustomMusicDiscsConfig {
 	// Values beyond the audio file count can cause placeholder discs to generate
 	// Values beyond 256 surpass the hardcoded disc limit
 	public static int maxLootGenCount;
+	public static boolean doLootgen;
 
 	public static String musicPath;
 	static {
@@ -21,6 +22,7 @@ public class CustomMusicDiscsConfig {
 		prop.setProperty("music_path", "./custom_discs");
 		prop.setProperty("use_song_as_item_name", "true");
 		prop.setProperty("max_lootgen_count", "5");
+		prop.setProperty("do_lootgen", "false");
 		prop.setProperty("starting_item_id", "25000");
 
 		ConfigHandler config = new ConfigHandler(CustomMusicDiscsClient.MOD_ID, prop);
@@ -28,6 +30,7 @@ public class CustomMusicDiscsConfig {
 		itemID = config.getInt("starting_item_id");
 		useSongAsItemName = config.getBoolean("use_song_as_item_name");
 		maxLootGenCount = config.getInt("max_lootgen_count");
+		doLootgen = config.getBoolean("do_lootgen");
 		musicPath = config.getString("music_path");
 
 		config.updateConfig();
