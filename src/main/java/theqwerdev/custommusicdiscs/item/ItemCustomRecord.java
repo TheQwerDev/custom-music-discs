@@ -9,7 +9,7 @@ public class ItemCustomRecord
 	public String translatedDesc;
 
 	public ItemCustomRecord(String name, int id, String s, String displayName) {
-		super(name, id, s);
+		super(name, id, s, null);
 		translatedName = displayName;
 		translatedDesc = s;
 	}
