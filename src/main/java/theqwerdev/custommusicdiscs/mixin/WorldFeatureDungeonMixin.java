@@ -1,6 +1,7 @@
 package theqwerdev.custommusicdiscs.mixin;
 
 import net.minecraft.core.item.Item;
+import net.minecraft.core.item.ItemRecord;
 import net.minecraft.core.item.ItemStack;
 import net.minecraft.core.world.generate.feature.WorldFeatureDungeon;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,8 +14,10 @@ import java.util.Random;
 
 @Mixin(value = WorldFeatureDungeon.class, remap = false)
 public class WorldFeatureDungeonMixin {
-	@Inject(method = "pickCheckLootItem", at = @At(value = "RETURN", ordinal = 10), cancellable = true)
+	@Inject(method = "pickCheckLootItem", at = @At(value = "RETURN"), cancellable = true)
 	private void includeCustomDiscs(Random random, CallbackInfoReturnable<ItemStack> cir) {
-		cir.setReturnValue(new ItemStack(random.nextInt(2) == 0 || !CustomMusicDiscsConfig.doLootgen ? Item.itemsList[Item.record13.id + random.nextInt(9)] : Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)]));
+	    if (cir.getReturnValue() != null && cir.getReturnValue().getItem() instanceof ItemRecord) {
+    		cir.setReturnValue(new ItemStack(random.nextInt(2) == 0 || !CustomMusicDiscsConfig.doLootgen ? Item.itemsList[Item.record13.id + random.nextInt(9)] : Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)]));
+		}
 	}
 }
