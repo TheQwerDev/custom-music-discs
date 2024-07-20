@@ -1,9 +1,10 @@
 package theqwerdev.custommusicdiscs.item;
 
 import net.minecraft.core.item.Item;
+import net.minecraft.core.item.tag.ItemTags;
 import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
-import turniplabs.halplibe.helper.ItemHelper;
+import turniplabs.halplibe.helper.ItemBuilder;
 import turniplabs.halplibe.helper.SoundHelper;
 
 import java.io.*;
@@ -44,8 +45,10 @@ public class MusicDiscAdder {
 					name = name.substring(0, extPos);
 
 					if(discs.size() < maxDiscCount) {
-						discs.add(ItemHelper.createItem(CustomMusicDiscsClient.MOD_ID,
-							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, (useSongAsItemName ? name : "Custom Music Disc")), "disc_gold.png"));
+						discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+						    .setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_gold")
+						    .build(
+							new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), name, (useSongAsItemName ? name : "Custom Music Disc"))));
 					}
 					else {
 						CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '" + musicFile.getName() + '\'');
@@ -82,8 +85,10 @@ public class MusicDiscAdder {
 
 		//filler discs so multiplayer support doesn't bite me in the ass
 		while(discs.size() < maxDiscCount) {
-			discs.add(ItemHelper.createItem(CustomMusicDiscsClient.MOD_ID,
-				new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), "placeholder", "Custom Music Disc"), "disc_gold.png").setNotInCreativeMenu());
+			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+			    .setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_gold")
+			    .build(
+				new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), "placeholder", "Custom Music Disc")).withTags(ItemTags.NOT_IN_CREATIVE_MENU));
 		}
 	}
 }

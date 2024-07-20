@@ -9,7 +9,6 @@
       "WorldFeatureLabyrinthMixin"
     ],
     "client": [
-      "RenderGlobalMixin"
     ],
     "injectors": {
         "defaultRequire": 1
