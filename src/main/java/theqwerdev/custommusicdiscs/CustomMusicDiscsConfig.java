@@ -16,10 +16,8 @@ public class CustomMusicDiscsConfig {
 	public static int maxLootGenCount;
 	public static boolean doLootgen;
 
-	public static String musicPath;
 	static {
 		Properties prop = new Properties();
-		prop.setProperty("music_path", "./custom_discs");
 		prop.setProperty("use_song_as_item_name", "true");
 		prop.setProperty("max_lootgen_count", "5");
 		prop.setProperty("do_lootgen", "false");
@@ -31,7 +29,6 @@ public class CustomMusicDiscsConfig {
 		useSongAsItemName = config.getBoolean("use_song_as_item_name");
 		maxLootGenCount = config.getInt("max_lootgen_count");
 		doLootgen = config.getBoolean("do_lootgen");
-		musicPath = config.getString("music_path");
 
 		config.updateConfig();
 	}

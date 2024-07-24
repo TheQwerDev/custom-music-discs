@@ -11,7 +11,7 @@ public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 	public void onInitializeServer() {
 		for(int i = 0; i < MusicDiscAdder.maxDiscCount; i++) {
 			new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-			    .setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_gold")
+			    .setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
     			.build(
 	   		    	new ItemCustomRecord("record.custom" + (i + 1), MusicDiscAdder.startingID + i, "placeholder", "Custom Music Disc"));
 		}

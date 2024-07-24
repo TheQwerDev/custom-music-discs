@@ -17,7 +17,13 @@ public class WorldFeatureDungeonMixin {
 	@Inject(method = "pickCheckLootItem", at = @At(value = "RETURN"), cancellable = true)
 	private void includeCustomDiscs(Random random, CallbackInfoReturnable<ItemStack> cir) {
 	    if (cir.getReturnValue() != null && cir.getReturnValue().getItem() instanceof ItemRecord) {
-    		cir.setReturnValue(new ItemStack(random.nextInt(2) == 0 || !CustomMusicDiscsConfig.doLootgen ? Item.itemsList[Item.record13.id + random.nextInt(9)] : Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)]));
+			Item loot;
+			if(random.nextInt(2) == 0 || !CustomMusicDiscsConfig.doLootgen)
+				loot = Item.itemsList[Item.record13.id + random.nextInt(9)];
+			else
+				loot = Item.itemsList[CustomMusicDiscsConfig.itemID + random.nextInt(CustomMusicDiscsConfig.maxLootGenCount)];
+
+    		cir.setReturnValue(new ItemStack(loot));
 		}
 	}
 }

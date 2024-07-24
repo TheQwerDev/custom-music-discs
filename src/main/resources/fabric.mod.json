@@ -23,6 +23,9 @@
     ],
 		"server": [
 			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
+		],
+		"afterGameStart": [
+			"theqwerdev.custommusicdiscs.texture.TextureManager"
 		]
   },
   "mixins": [
