@@ -14,6 +14,7 @@ public class CustomMusicDiscsClient implements ClientModInitializer {
     public void onInitializeClient() {
 		new MusicDiscAdder().InitializeItems();
 		SoundHelper.addStreaming(MOD_ID, "placeholder.ogg"); //aww fiddlesticks, what now?!
+
 		LOGGER.info("Custom Music Discs initialized.");
-    }
+	}
 }

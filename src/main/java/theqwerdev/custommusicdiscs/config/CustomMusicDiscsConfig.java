@@ -1,4 +1,4 @@
-package theqwerdev.custommusicdiscs;
+package theqwerdev.custommusicdiscs.config;
 
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import turniplabs.halplibe.util.ConfigHandler;

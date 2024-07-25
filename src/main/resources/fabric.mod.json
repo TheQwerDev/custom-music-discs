@@ -25,7 +25,11 @@
 			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
 		],
 		"afterGameStart": [
-			"theqwerdev.custommusicdiscs.texture.TextureManager"
+			"theqwerdev.custommusicdiscs.texture.TextureManager",
+			"theqwerdev.custommusicdiscs.config.CustomMusicDiscsOptionsPage"
+		],
+		"modmenu": [
+			"theqwerdev.custommusicdiscs.config.ModMenuModule"
 		]
   },
   "mixins": [

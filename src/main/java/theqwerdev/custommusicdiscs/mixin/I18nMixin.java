@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
-import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
+import theqwerdev.custommusicdiscs.config.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.item.ItemCustomRecord;
 
 @Mixin(value = I18n.class, remap = false)

@@ -20,10 +20,10 @@ public class TextureManager implements GameStartEntrypoint {
 
 	public static void addDiscTexture(File texture, int id) {
 		try {
-			Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), Integer.toString(id) + ".png"));
+			Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
 			tempPath.toFile().deleteOnExit();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
 	}
 

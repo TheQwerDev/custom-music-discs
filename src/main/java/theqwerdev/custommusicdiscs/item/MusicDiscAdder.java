@@ -2,7 +2,7 @@ package theqwerdev.custommusicdiscs.item;
 
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.tag.ItemTags;
-import theqwerdev.custommusicdiscs.CustomMusicDiscsConfig;
+import theqwerdev.custommusicdiscs.config.CustomMusicDiscsConfig;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.texture.TextureManager;
 import turniplabs.halplibe.helper.ItemBuilder;
@@ -18,10 +18,11 @@ public class MusicDiscAdder {
 	public static int maxDiscCount = 256;
 	public static int startingID = CustomMusicDiscsConfig.itemID;
 	private static final boolean useSongAsItemName = CustomMusicDiscsConfig.useSongAsItemName;
-	private static final Path musicPath = Paths.get("./discpack");
+	public static final Path musicPath = Paths.get("./discpack");
 	private static final String[] exts = {".ogg", ".wav", ".mus", ".png"};
 
 	ArrayList<Item> discs = new ArrayList<>();
+	public static Map<Integer, File> trackMap = new HashMap<>();
 	BitSet checkedID = new BitSet(maxDiscCount);
 
 	public void InitializeItems() {
@@ -51,7 +52,6 @@ public class MusicDiscAdder {
 		});
 
 		if(trackList != null && trackList.length > 0) {
-			Map<String, File> trackMap = new HashMap<>();
 			int maxTrackID = 0;
 
 			for(File track : trackList) {
@@ -72,7 +72,7 @@ public class MusicDiscAdder {
 					continue;
 				}
 
-				trackMap.put(track.getName(), track);
+				trackMap.put(trackNumber, track);
 				checkedID.set(trackNumber - 1);
 				if (trackNumber > maxTrackID)
 					maxTrackID = trackNumber;
@@ -91,20 +91,19 @@ public class MusicDiscAdder {
 
 						trackIDRange.set(nextID, false);
 						trackIDRange.set(i - 1);
-						File track = trackMap.get(Integer.toString(nextID + 1));
+						File track = trackMap.get(nextID + 1);
 						if (!track.renameTo(new File("./discpack/" + i)))
 							CustomMusicDiscsClient.LOGGER.warn("Failed to set track ID " + i + " to track ID " + nextID + ".");
 						else
-							trackMap.put(Integer.toString(i), new File("./discpack/" + i));
+							trackMap.put(i, new File("./discpack/" + i));
 
-						trackMap.remove(Integer.toString(nextID + 1));
+						trackMap.remove(nextID + 1);
 					}
 				}
 			}
 
 			for(File track : trackMap.values()) {
 				int trackNumber = Integer.parseInt(track.getName());
-				System.out.println(trackNumber);
 				File[] trackData = track.listFiles((dir, name) -> {
 					for (String ext : exts)
 						if (name.toLowerCase().endsWith(ext)) {
@@ -121,7 +120,7 @@ public class MusicDiscAdder {
 
 				for (File data : trackData) {
 					String name = data.getName();
-					if (name.equals("texture.png")) {
+					if (!foundTextureFile && name.equals("texture.png")) {
 						foundTextureFile = true;
 						TextureManager.addDiscTexture(data, trackNumber);
 					} else if (!foundAudioFile && !name.endsWith(".png")) {
