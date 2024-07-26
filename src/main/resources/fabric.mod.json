@@ -25,7 +25,7 @@
 			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
 		],
 		"afterGameStart": [
-			"theqwerdev.custommusicdiscs.texture.TextureManager",
+			"theqwerdev.custommusicdiscs.util.TexturePackGenerator",
 			"theqwerdev.custommusicdiscs.config.CustomMusicDiscsOptionsPage"
 		],
 		"modmenu": [
@@ -35,8 +35,7 @@
   "mixins": [
     "custommusicdiscs.mixins.json"
   ],
-
-  "depends": {
+	"depends": {
     "fabricloader": ">=0.13.3",
 		"halplibe": ">=3.4.14"
   },

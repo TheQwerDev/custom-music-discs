@@ -1,4 +1,4 @@
-package theqwerdev.custommusicdiscs.texture;
+package theqwerdev.custommusicdiscs.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.texturepack.TexturePack;
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class TextureManager implements GameStartEntrypoint {
+public class TexturePackGenerator implements GameStartEntrypoint {
 	private static final String packName = "CustomMusicDiscsResources";
 	private static final Path baseFolderPath = Paths.get("./texturepacks/" + packName);
 	private static final Path fullPath = Paths.get("./texturepacks/" + packName + "/assets/custommusicdiscs/textures/item");
@@ -36,10 +36,10 @@ public class TextureManager implements GameStartEntrypoint {
 				Files.createDirectories(fullPath);
 
 			if(!Files.exists(packpng))
-				Files.copy(TextureManager.class.getResourceAsStream("/assets/custommusicdiscs/icon.png"), packpng);
+				Files.copy(TexturePackGenerator.class.getResourceAsStream("/assets/custommusicdiscs/icon.png"), packpng);
 
 			if(!Files.exists(manifest))
-				Files.copy(TextureManager.class.getResourceAsStream("/assets/custommusicdiscs/manifest.json"), manifest);
+				Files.copy(TexturePackGenerator.class.getResourceAsStream("/assets/custommusicdiscs/manifest.json"), manifest);
 		}
 		catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());

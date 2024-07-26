@@ -8,21 +8,30 @@ import net.minecraft.client.gui.options.data.OptionsPages;
 import net.minecraft.core.item.Item;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.item.MusicDiscAdder;
+import theqwerdev.custommusicdiscs.util.ZipUtils;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 public class CustomMusicDiscsOptionsPage implements GameStartEntrypoint {
 	public static OptionsPage optionsPage;
 	private static Map<Integer, File> discpackMap;
+
+	static {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
+		}
+	}
 
 	private static final String[] exts = {".ogg", ".wav", ".mus"};
 	FileFilter audioFileFilter = new FileFilter() {
@@ -57,12 +66,6 @@ public class CustomMusicDiscsOptionsPage implements GameStartEntrypoint {
 	}
 
 	private void selectFiles() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
 		File audioFile = fileSelectionPrompt("Select an audio file...", audioFileFilter);
 		if(audioFile == null) {
 			CustomMusicDiscsClient.LOGGER.info("Disc importing cancelled.");
@@ -89,6 +92,63 @@ public class CustomMusicDiscsOptionsPage implements GameStartEntrypoint {
 		}
 	}
 
+	private void importDiscpack() {
+		File zipFile = fileSelectionPrompt("Select a discpack to import (NOTE: WILL DELETE YOUR CURRENT DISCPACK)", new FileNameExtensionFilter("Zip File (*.zip)", "zip"));
+
+		if(zipFile != null) {
+			try {
+				File discpack = new File("./discpack");
+
+				if(!ZipUtils.deleteDirectory(discpack)) {
+					CustomMusicDiscsClient.LOGGER.warn("Failed to delete current discpack! Aborting discpack import...");
+					return;
+				}
+
+				CustomMusicDiscsClient.LOGGER.info("Importing discpack from '" + zipFile.getPath() + '\'');
+				ZipUtils.unzipFile(zipFile);
+			} catch (Exception e) {
+				CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			}
+
+			MusicDiscAdder.getTrackMap();
+			discpackMap = MusicDiscAdder.trackMap;
+		}
+		else {
+			CustomMusicDiscsClient.LOGGER.info("Discpack importing cancelled.");
+		}
+	}
+
+	private void exportDiscpack() {
+		JFileChooser saveZip = new JFileChooser(".");
+		saveZip.setDialogTitle("Choose the discpack export location...");
+		saveZip.setFileFilter(new FileNameExtensionFilter("Zip File (*.zip)", "zip"));
+		saveZip.setDialogType(JFileChooser.SAVE_DIALOG);
+		saveZip.setAcceptAllFileFilterUsed(false);
+		saveZip.setSelectedFile(new File("./discpack.zip"));
+
+		int dialogResult = saveZip.showSaveDialog(null);
+		if(dialogResult == JFileChooser.APPROVE_OPTION) {
+			File zipFile = saveZip.getSelectedFile();
+
+			if(!zipFile.getPath().endsWith(".zip"))
+				zipFile = new File(zipFile.getPath() + ".zip");
+
+			CustomMusicDiscsClient.LOGGER.info("Exporting discpack at '" + zipFile.getPath() + '\'');
+
+			try {
+				File discpack = new File("./discpack/");
+				ZipOutputStream zipOut = new ZipOutputStream(Files.newOutputStream(zipFile.toPath()));
+				ZipUtils.zipFile(discpack, discpack.getName(), zipOut);
+				zipOut.close();
+			} catch (Exception e) {
+				CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			}
+		}
+		else {
+			CustomMusicDiscsClient.LOGGER.info("Discpack exporting cancelled.");
+		}
+	}
+
 	public static GuiOptions getOptionsPage(GuiScreen parent) {
 		return new GuiOptions(parent, optionsPage);
 	}
@@ -102,7 +162,11 @@ public class CustomMusicDiscsOptionsPage implements GameStartEntrypoint {
 	public void afterGameStart() {
 		discpackMap = MusicDiscAdder.trackMap;
 		optionsPage = new OptionsPage("custommusicdiscs.options.title", Item.record13.getDefaultStack())
-			.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", this::selectFiles))
+			.withComponent(new OptionsCategory("custommusicdiscs.options.category.general"))
+			.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpacksettings")
+				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", this::selectFiles))
+				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdiscpack", this::importDiscpack))
+				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.exportdiscpack", this::exportDiscpack)))
 			.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpackorder")
 				.withComponent(new SelectedTexturePackListComponent()));
 
