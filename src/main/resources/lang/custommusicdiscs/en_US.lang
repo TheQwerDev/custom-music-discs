@@ -1,7 +1,11 @@
 custommusicdiscs.options.title=Music Discs
 custommusicdiscs.options.category.general=General Settings
-custommusicdiscs.options.category.discpacksettings=Discpack Settings
+custommusicdiscs.options.button.use_song_as_item_name=Use Song As Disc Name
+custommusicdiscs.options.button.loop_disc_audio=Loop Disc Audio
+custommusicdiscs.options.button.do_lootgen=Add Custom Discs To Lootgen
+custommusicdiscs.options.category.discpacksettings=Discpack Settings (restart to apply any changes)
 custommusicdiscs.options.button.importdisc=Import Disc
 custommusicdiscs.options.button.importdiscpack=Import Discpack
 custommusicdiscs.options.button.exportdiscpack=Export Discpack
-custommusicdiscs.options.category.discpackorder=Discpack Order
+custommusicdiscs.options.category.discpackorder=Discpack Order (restart to apply any changes)
+custommusicdiscs.options.label.nodiscs=No discs found (╯°□°)╯︵ ┻━┻

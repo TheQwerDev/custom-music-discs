@@ -1,5 +1,7 @@
 package theqwerdev.custommusicdiscs.util;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,7 +10,23 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-public class ZipUtils {
+public class FileUtils {
+	public static File fileSelectionPrompt(String dialogTitle, FileFilter filter) {
+		File file = null;
+
+		JFileChooser fileChooser = new JFileChooser(".");
+		fileChooser.setDialogTitle(dialogTitle);
+		fileChooser.setFileFilter(filter);
+		fileChooser.setAcceptAllFileFilterUsed(false);
+
+		int dialogResult = fileChooser.showOpenDialog(null);
+		if(dialogResult == JFileChooser.APPROVE_OPTION) {
+			file = fileChooser.getSelectedFile();
+		}
+
+		return file;
+	}
+
 	public static boolean deleteDirectory(File dir) {
 		File[] files = dir.listFiles();
 

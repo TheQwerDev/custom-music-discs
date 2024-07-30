@@ -6,12 +6,10 @@ public class ItemCustomRecord
 	extends ItemRecord {
 
 	public String translatedName;
-	public String translatedDesc;
 
-	public ItemCustomRecord(String name, int id, String s, String displayName) {
+	public ItemCustomRecord(String name, int id, String s) {
 		super(name, id, s, null);
-		translatedName = displayName;
-		translatedDesc = s;
+		translatedName = s;
 	}
 }
 
