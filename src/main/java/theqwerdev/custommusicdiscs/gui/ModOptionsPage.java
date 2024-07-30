@@ -7,6 +7,7 @@ import net.minecraft.client.gui.options.data.OptionsPage;
 import net.minecraft.client.gui.options.data.OptionsPages;
 import net.minecraft.core.item.Item;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
+import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
 import theqwerdev.custommusicdiscs.util.FileUtils;
 
@@ -138,12 +139,16 @@ public class ModOptionsPage {
 			.withComponent(new OptionsCategory("custommusicdiscs.options.category.general")
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.use_song_as_item_name", "use_song_as_item_name"))
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.loop_disc_audio", "loop_disc_audio"))
-				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.do_lootgen", "do_lootgen")))
-			.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpacksettings")
+				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.do_lootgen", "do_lootgen")));
+
+		if(!ModConfig.hideDiscpackSettings) {
+			optionsPage.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpacksettings")
+				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.hide_discpack_settings", "hide_discpack_settings"))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", ModOptionsPage::selectFiles))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdiscpack", ModOptionsPage::importDiscpack))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.exportdiscpack", ModOptionsPage::exportDiscpack))
 				.withComponent(new DiscpackListComponent()));
+		}
 
 		OptionsPages.register(optionsPage);
 	}

@@ -16,6 +16,7 @@ public class ModConfig {
 	// Values beyond 256 surpass the hardcoded disc limit
 	public static int maxLootGenCount;
 	public static boolean doLootgen;
+	public static boolean hideDiscpackSettings;
 	public static int itemID;
 
 	public static ConfigHandler config;
@@ -24,6 +25,7 @@ public class ModConfig {
 		useSongAsItemName = config.getBoolean("use_song_as_item_name");
 		loopDiscAudio = config.getBoolean("loop_disc_audio");
 		doLootgen = config.getBoolean("do_lootgen");
+		hideDiscpackSettings = config.getBoolean("hide_discpack_settings");
 	}
 
 	static {
@@ -32,6 +34,7 @@ public class ModConfig {
 		//client only
 		prop.setProperty("use_song_as_item_name", "true");
 		prop.setProperty("loop_disc_audio", "true");
+		prop.setProperty("hide_discpack_settings", "false");
 
 		//server config
 		if(Global.isServer)
@@ -43,13 +46,10 @@ public class ModConfig {
 
 		config = new ConfigHandler(CustomMusicDiscsClient.MOD_ID + (Global.isServer ? "_server" : ""), prop);
 
-		useSongAsItemName = config.getBoolean("use_song_as_item_name");
-		loopDiscAudio = config.getBoolean("loop_disc_audio");
+		updateValues();
 
 		if(Global.isServer)
 			maxLootGenCount = config.getInt("max_lootgen_count");
-
-		doLootgen = config.getBoolean("do_lootgen");
 		itemID = config.getInt("starting_item_id");
 
 		config.updateConfig();
