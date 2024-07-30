@@ -25,7 +25,6 @@
 			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
 		],
 		"afterGameStart": [
-			"theqwerdev.custommusicdiscs.util.TexturePackGenerator",
 			"theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient"
 		],
 		"modmenu": [

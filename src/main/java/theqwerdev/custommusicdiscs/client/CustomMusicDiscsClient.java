@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import theqwerdev.custommusicdiscs.gui.ModOptionsPage;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
+import theqwerdev.custommusicdiscs.util.TexturePackGenerator;
 import turniplabs.halplibe.helper.SoundHelper;
 import turniplabs.halplibe.util.GameStartEntrypoint;
 
@@ -21,12 +22,11 @@ public class CustomMusicDiscsClient implements ClientModInitializer, GameStartEn
 	}
 
 	@Override
-	public void beforeGameStart() {
-
-	}
+	public void beforeGameStart() {}
 
 	@Override
 	public void afterGameStart() {
 		ModOptionsPage.registerOptionsPage();
+		TexturePackGenerator.initializeTexturePackGenerator();
 	}
 }

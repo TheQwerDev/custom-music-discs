@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.texturepack.TexturePack;
 import net.minecraft.client.render.texturepack.TexturePackList;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
-import turniplabs.halplibe.util.GameStartEntrypoint;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,21 +12,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class TexturePackGenerator implements GameStartEntrypoint {
+public class TexturePackGenerator {
 	private static final String packName = "CustomMusicDiscsResources";
 	private static final Path baseFolderPath = Paths.get("./texturepacks/" + packName);
 	private static final Path fullPath = Paths.get("./texturepacks/" + packName + "/assets/custommusicdiscs/textures/item");
 
-	public static void addDiscTexture(File texture, int id) {
-		try {
-			Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
-			tempPath.toFile().deleteOnExit();
-		} catch (IOException e) {
-			CustomMusicDiscsClient.LOGGER.warn(e.toString());
-		}
+	public static void addDiscTexture(File texture, int id) throws IOException {
+		Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
+		tempPath.toFile().deleteOnExit();
 	}
 
-	static {
+	public static void initializeTexturePackGenerator() {
 		Path packpng = Paths.get(baseFolderPath.toString(), "pack.png");
 		Path manifest = Paths.get(baseFolderPath.toString(), "manifest.json");
 
@@ -44,14 +39,7 @@ public class TexturePackGenerator implements GameStartEntrypoint {
 		catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
-	}
 
-	@Override
-	public void beforeGameStart() {
-	}
-
-	@Override
-	public void afterGameStart() {
 		//auto enable texture pack on boot
 		TexturePackList texturePackList = Minecraft.getMinecraft(Minecraft.class).texturePackList;
 		List<TexturePack> availableTexturePacks = texturePackList.availableTexturePacks();

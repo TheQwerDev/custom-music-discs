@@ -87,7 +87,7 @@ public class DiscpackListComponent implements OptionsComponent {
 			if(audioFile == null)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + trackNumber);
 			if (imageFile == null)
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find 'texture.png' for track " + trackNumber);
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
 
 			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, trackNumber, track, audioFile, imageFile);
 			this.discpackButtons.add(prevButton);
@@ -113,8 +113,7 @@ public class DiscpackListComponent implements OptionsComponent {
 		}
 	}
 
-	public void onKeyPress(int keyCode, char character) {
-	}
+	public void onKeyPress(int keyCode, char character) {}
 
 	public boolean matchesSearchTerm(String term) {
 		return false;
@@ -264,6 +263,7 @@ public class DiscpackListComponent implements OptionsComponent {
 			ModDiscs.removeFromTrackMap(Integer.parseInt(this.parentFolder.getName()));
 			FileUtils.deleteDirectory(this.parentFolder);
 			component.draggedButton = null;
+			component.createDiscpackButtons();
 		}
 
 		public int draggedX(int mouseX) {
@@ -307,8 +307,6 @@ public class DiscpackListComponent implements OptionsComponent {
 				tessellator.draw();
 				GL11.glEnable(3553);
 			}
-
-
 
 			if(this.discImageBuffer != null && this.discImage < 0) {
 				discImage = ButtonComponent.mc.renderEngine.allocateAndSetupTexture(discImageBuffer);

@@ -172,9 +172,8 @@ public class ModDiscs {
 			}
 
 			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-				.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/" + trackNumber)
-				.build(
-					new ItemCustomRecord("record.custom" + trackNumber, startingID + trackNumber - 1, name)));
+				.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/" + (imageFile == null ? "disc_placeholder" : trackNumber))
+				.build(new ItemCustomRecord("record.custom" + trackNumber, startingID + trackNumber - 1, name)));
 			discCount++;
 
 			try {
@@ -182,24 +181,25 @@ public class ModDiscs {
 				tempPath.toFile().deleteOnExit();
 
 				CustomMusicDiscsClient.LOGGER.info("Imported '" + audioFile.getName() + '\'');
+
+				if (imageFile == null)
+					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
+				else
+					TexturePackGenerator.addDiscTexture(imageFile, trackNumber);
 			} catch (IOException e) {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 
-			if (imageFile == null) {
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
-			}
-			else {
-				TexturePackGenerator.addDiscTexture(imageFile, trackNumber);
-			}
+
 		}
 
 		//filler discs so multiplayer support doesn't bite me in the ass
-		while (discs.size() < maxDiscCount) {
-			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-				.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
-				.build(
-					new ItemCustomRecord("record.custom" + (discs.size() + 1), startingID + discs.size(), "placeholder")).withTags(ItemTags.NOT_IN_CREATIVE_MENU));
+		for(int i = startingID; i < startingID + maxDiscCount; i++) {
+			if(Item.itemsList[i] == null) {
+				discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+					.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
+					.build(new ItemCustomRecord("record.custom" + (i - startingID + 1), i, "placeholder")).withTags(ItemTags.NOT_IN_CREATIVE_MENU));
+			}
 		}
 	}
 
