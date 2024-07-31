@@ -22,7 +22,7 @@ public class TexturePackGenerator {
 			Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
 			tempPath.toFile().deleteOnExit();
 		} catch (IOException e) {
-			throw new RuntimeException(e);
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
 	}
 

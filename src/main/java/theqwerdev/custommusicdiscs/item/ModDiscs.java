@@ -23,13 +23,13 @@ public class ModDiscs {
 
 	public static int discCount = 0;
 	private static final List<Item> discs = new ArrayList<>();
-	private static Map<Integer, File> trackMap;
+	private static SortedMap<Integer, File> trackMap;
 
 	public static int getTrackMapSize() {
 		return trackMap.size();
 	}
 
-	public static Map<Integer, File> getTrackMap() {
+	public static SortedMap<Integer, File> getTrackMap() {
 		return trackMap;
 	}
 

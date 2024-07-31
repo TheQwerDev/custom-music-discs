@@ -39,8 +39,6 @@ public class ModOptionsPage {
 		}
 	};
 
-
-
 	private static void selectFiles() {
 		File audioFile = FileUtils.fileSelectionPrompt("Select an audio file...", audioFileFilter);
 		if(audioFile == null) {
