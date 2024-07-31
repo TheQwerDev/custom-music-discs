@@ -24,7 +24,7 @@
 		"server": [
 			"theqwerdev.custommusicdiscs.server.CustomMusicDiscsServer"
 		],
-		"afterGameStart": [
+		"afterClientStart": [
 			"theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient"
 		],
 		"modmenu": [

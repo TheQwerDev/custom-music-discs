@@ -4,6 +4,7 @@
   "package": "theqwerdev.custommusicdiscs.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "I18nMixin",
     "EntityCreeperMixin",
     "WorldFeatureDungeonMixin",
     "WorldFeatureLabyrinthMixin",
@@ -11,7 +12,6 @@
   ],
   "client": [
     "GuiOptionsMixin",
-    "I18nMixin",
     "ShortcutComponentMixin",
     "SoundManagerMixin"
   ],

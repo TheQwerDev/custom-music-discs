@@ -3,6 +3,7 @@ custommusicdiscs.options.category.general=General Settings
 custommusicdiscs.options.button.use_song_as_item_name=Use Song As Disc Name
 custommusicdiscs.options.button.loop_disc_audio=Loop Disc Audio
 custommusicdiscs.options.button.do_lootgen=Add Custom Discs To Lootgen
+custommusicdiscs.options.button.silence_image_file_warnings=Silence Image File Warnings
 custommusicdiscs.options.category.discpacksettings=Discpack Settings (restart to apply any changes)
 custommusicdiscs.options.button.hide_discpack_settings=Hide Discpack Settings
 custommusicdiscs.options.button.importdisc=Import Disc

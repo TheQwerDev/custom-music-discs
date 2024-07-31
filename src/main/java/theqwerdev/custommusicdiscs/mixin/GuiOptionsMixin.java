@@ -14,6 +14,6 @@ public class GuiOptionsMixin {
 	@Inject(method = "onClosed", at = @At("TAIL"))
 	private void saveConfig(CallbackInfo ci) {
 		ModConfig.config.updateConfig();
-		ModConfig.updateValues();
+		ModConfig.updateValues(false);
 	}
 }

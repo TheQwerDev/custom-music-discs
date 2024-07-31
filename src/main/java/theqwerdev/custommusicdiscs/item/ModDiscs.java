@@ -181,16 +181,17 @@ public class ModDiscs {
 				tempPath.toFile().deleteOnExit();
 
 				CustomMusicDiscsClient.LOGGER.info("Imported '" + audioFile.getName() + '\'');
-
-				if (imageFile == null)
-					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
-				else
-					TexturePackGenerator.addDiscTexture(imageFile, trackNumber);
 			} catch (IOException e) {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 
-
+			if (imageFile == null) {
+				if(!ModConfig.silenceImageFileWarnings)
+					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
+			}
+			else {
+				TexturePackGenerator.addDiscTexture(imageFile, trackNumber);
+			}
 		}
 
 		//filler discs so multiplayer support doesn't bite me in the ass

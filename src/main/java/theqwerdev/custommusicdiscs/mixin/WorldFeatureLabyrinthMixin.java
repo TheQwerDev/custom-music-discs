@@ -20,13 +20,11 @@ public class WorldFeatureLabyrinthMixin {
 	private void includeCustomDiscs(Random random, CallbackInfoReturnable<ItemStack> cir) {
 	    if (cir.getReturnValue() != null && cir.getReturnValue().getItem() instanceof ItemRecord) {
 			Item loot;
-			if(random.nextInt(2) == 0 || !ModConfig.doLootgen) {
+			int lootGenCount = Global.isServer ? ModConfig.maxLootGenCount : ModDiscs.discCount;
+			if(random.nextInt(2) == 0 || !ModConfig.doLootgen || lootGenCount > ModDiscs.maxDiscCount || lootGenCount == 0)
 				loot = Item.itemsList[Item.record13.id + random.nextInt(9)];
-			}
-			else {
-				int lootGenCount = Global.isServer ? ModConfig.maxLootGenCount : ModDiscs.discCount;
+			else
 				loot = Item.itemsList[ModConfig.itemID + random.nextInt(lootGenCount)];
-			}
 
 			cir.setReturnValue(new ItemStack(loot));
 		}

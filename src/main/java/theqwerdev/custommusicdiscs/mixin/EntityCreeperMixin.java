@@ -14,12 +14,10 @@ public class EntityCreeperMixin {
 	@ModifyArg(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/entity/monster/EntityCreeper;spawnAtLocation(II)Lnet/minecraft/core/entity/EntityItem;"), index = 0)
 	private int includeCustomDiscs(int itemID) {
 		EntityCreeper leCreeper = (EntityCreeper)(Object)this;
-		if(leCreeper.random.nextInt(2) == 0 || !ModConfig.doLootgen) {
+		int lootGenCount = Global.isServer ? ModConfig.maxLootGenCount : ModDiscs.discCount;
+		if(leCreeper.random.nextInt(2) == 0 || !ModConfig.doLootgen || lootGenCount > ModDiscs.maxDiscCount || lootGenCount == 0)
 			return Item.record13.id + leCreeper.random.nextInt(11);
-		}
-		else {
-			int lootGenCount = Global.isServer ? ModConfig.maxLootGenCount : ModDiscs.discCount;
+		else
 			return ModConfig.itemID + leCreeper.random.nextInt(lootGenCount);
-		}
 	}
 }

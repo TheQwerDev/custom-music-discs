@@ -139,7 +139,8 @@ public class ModOptionsPage {
 			.withComponent(new OptionsCategory("custommusicdiscs.options.category.general")
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.use_song_as_item_name", "use_song_as_item_name"))
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.loop_disc_audio", "loop_disc_audio"))
-				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.do_lootgen", "do_lootgen")));
+				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.do_lootgen", "do_lootgen"))
+				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.silence_image_file_warnings", "silence_image_file_warnings")));
 
 		if(!ModConfig.hideDiscpackSettings) {
 			optionsPage.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpacksettings")

@@ -1,6 +1,5 @@
 package theqwerdev.custommusicdiscs.config;
 
-import net.minecraft.core.Global;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import turniplabs.halplibe.util.ConfigHandler;
 
@@ -17,39 +16,48 @@ public class ModConfig {
 	public static int maxLootGenCount;
 	public static boolean doLootgen;
 	public static boolean hideDiscpackSettings;
+	public static boolean silenceImageFileWarnings;
 	public static int itemID;
 
 	public static ConfigHandler config;
 
-	public static void updateValues() {
-		useSongAsItemName = config.getBoolean("use_song_as_item_name");
-		loopDiscAudio = config.getBoolean("loop_disc_audio");
+	public static void updateValues(boolean isServer) {
+		if(isServer) {
+			maxLootGenCount = config.getInt("max_lootgen_count");
+		} else {
+			useSongAsItemName = config.getBoolean("use_song_as_item_name");
+			loopDiscAudio = config.getBoolean("loop_disc_audio");
+			hideDiscpackSettings = config.getBoolean("hide_discpack_settings");
+			silenceImageFileWarnings = config.getBoolean("silence_image_file_warnings");
+		}
+
 		doLootgen = config.getBoolean("do_lootgen");
-		hideDiscpackSettings = config.getBoolean("hide_discpack_settings");
 	}
 
-	static {
+	public static void initConfig(boolean isServer) {
 		Properties prop = new Properties();
 
-		//client only
-		prop.setProperty("use_song_as_item_name", "true");
-		prop.setProperty("loop_disc_audio", "true");
-		prop.setProperty("hide_discpack_settings", "false");
-
-		//server config
-		if(Global.isServer)
-			prop.setProperty("max_lootgen_count", "5");
+		if(isServer) {
+			//server only
+			prop.setProperty("max_lootgen_count", "5 #");
+			prop.setProperty("do_lootgen", "false");
+		}
+		else {
+			//client only
+			prop.setProperty("use_song_as_item_name", "true");
+			prop.setProperty("loop_disc_audio", "false");
+			prop.setProperty("hide_discpack_settings", "false");
+			prop.setProperty("do_lootgen", "true");
+			prop.setProperty("silence_image_file_warnings", "false");
+		}
 
 		//common config
-		prop.setProperty("do_lootgen", "true");
 		prop.setProperty("starting_item_id", "25000");
 
-		config = new ConfigHandler(CustomMusicDiscsClient.MOD_ID + (Global.isServer ? "_server" : ""), prop);
+		config = new ConfigHandler(CustomMusicDiscsClient.MOD_ID + (isServer ? "_server" : ""), prop);
 
-		updateValues();
+		updateValues(isServer);
 
-		if(Global.isServer)
-			maxLootGenCount = config.getInt("max_lootgen_count");
 		itemID = config.getInt("starting_item_id");
 
 		config.updateConfig();

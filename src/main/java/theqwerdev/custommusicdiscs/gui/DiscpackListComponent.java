@@ -11,6 +11,7 @@ import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.collection.Pair;
 import org.lwjgl.opengl.GL11;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
+import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
 import theqwerdev.custommusicdiscs.util.FileUtils;
 
@@ -84,9 +85,9 @@ public class DiscpackListComponent implements OptionsComponent {
 			Pair<File, File> trackData = ModDiscs.extractTrackData(track);
 			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
 
-			if(audioFile == null)
+			if (audioFile == null)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + trackNumber);
-			if (imageFile == null)
+			if (imageFile == null && !ModConfig.silenceImageFileWarnings)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
 
 			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, trackNumber, track, audioFile, imageFile);

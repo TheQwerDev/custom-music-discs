@@ -17,12 +17,16 @@ public class TexturePackGenerator {
 	private static final Path baseFolderPath = Paths.get("./texturepacks/" + packName);
 	private static final Path fullPath = Paths.get("./texturepacks/" + packName + "/assets/custommusicdiscs/textures/item");
 
-	public static void addDiscTexture(File texture, int id) throws IOException {
-		Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
-		tempPath.toFile().deleteOnExit();
+	public static void addDiscTexture(File texture, int id) {
+		try {
+			Path tempPath = Files.copy(texture.toPath(), Paths.get(fullPath.toString(), id + ".png"));
+			tempPath.toFile().deleteOnExit();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	public static void initializeTexturePackGenerator() {
+	public static void initializeTexturePackPath() {
 		Path packpng = Paths.get(baseFolderPath.toString(), "pack.png");
 		Path manifest = Paths.get(baseFolderPath.toString(), "manifest.json");
 
@@ -39,8 +43,9 @@ public class TexturePackGenerator {
 		catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
+	}
 
-		//auto enable texture pack on boot
+	public static void forceEnablePack() {
 		TexturePackList texturePackList = Minecraft.getMinecraft(Minecraft.class).texturePackList;
 		List<TexturePack> availableTexturePacks = texturePackList.availableTexturePacks();
 		for(TexturePack texturePack : availableTexturePacks) {
