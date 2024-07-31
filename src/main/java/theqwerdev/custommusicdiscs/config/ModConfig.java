@@ -39,7 +39,7 @@ public class ModConfig {
 
 		if(isServer) {
 			//server only
-			prop.setProperty("max_lootgen_count", "5 #");
+			prop.setProperty("max_lootgen_count", "5");
 			prop.setProperty("do_lootgen", "false");
 		}
 		else {
