@@ -30,6 +30,7 @@ Client-side variables can also be changed in the ingame UI.
 - use_song_as_disc_name (default: true): Decides if the song name should appear as the item's name or as the item's description. Does not affect vanilla discs.
 - loop_disc_audio (default: false): Loops the currently inserted disc once audio playback ends.
 - silence_image_file_warnings (default: false): Stops the displaying of "Failed to find image" warnings. Useful for people that don't want to add custom textures.
+- hide_discpack_settings (FOR MODPACK DEVELOPERS) (default: false): Prevents the user from accessing the "Discpack Settings" tab in the ingame options menu.
 
 ### Server-side Variables:
 - max_lootgen_count (default: 5): Sets the maximum ID number that should be chosen when adding custom discs to loot.
