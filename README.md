@@ -1,6 +1,8 @@
 # Custom Music Discs for BTA 7.2
 This mod allows you to add custom discs to play on your jukebox by simply importing audio and image files! Now with ingame UI for easily adding new discs!
 
+Custom Music Discs only supports the audio file extensions that Minecraft BTA does. (.ogg, .wav, .mus)
+
 NOTE: This readme only applies for mod versions made for 7.2-pre2 and up!
 ## Adding Discs
 Adding custom discs can be done in two ways:
