@@ -1,6 +1,5 @@
 package theqwerdev.custommusicdiscs.gui;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.options.components.ButtonComponent;
 import net.minecraft.client.gui.options.components.OptionsComponent;
@@ -29,10 +28,6 @@ public class DiscpackListComponent implements OptionsComponent {
 	private final List<DiscpackButton> discpackButtons = new ArrayList<>();
 	private int size;
 	DiscpackButton draggedButton;
-
-	public void init(Minecraft mc) {
-		this.createDiscpackButtons();
-	}
 
 	public void tick() {
 		if(this.size != ModDiscs.getTrackMapSize()) {

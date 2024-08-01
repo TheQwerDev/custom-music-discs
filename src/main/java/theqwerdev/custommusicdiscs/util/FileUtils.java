@@ -1,5 +1,7 @@
 package theqwerdev.custommusicdiscs.util;
 
+import org.lwjgl.opengl.Display;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
@@ -13,13 +15,11 @@ import java.util.zip.ZipOutputStream;
 public class FileUtils {
 	public static File fileSelectionPrompt(String dialogTitle, FileFilter filter) {
 		File file = null;
-
 		JFileChooser fileChooser = new JFileChooser(".");
 		fileChooser.setDialogTitle(dialogTitle);
 		fileChooser.setFileFilter(filter);
 		fileChooser.setAcceptAllFileFilterUsed(false);
-
-		int dialogResult = fileChooser.showOpenDialog(null);
+		int dialogResult = fileChooser.showOpenDialog(Display.getParent());
 		if(dialogResult == JFileChooser.APPROVE_OPTION) {
 			file = fileChooser.getSelectedFile();
 		}

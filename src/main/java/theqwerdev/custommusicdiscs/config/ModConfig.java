@@ -21,6 +21,7 @@ public class ModConfig {
 
 	public static ConfigHandler config;
 
+	//prevent options saving spam by marking if any change has been made
 	public static void updateValues(boolean isServer) {
 		if(isServer) {
 			maxLootGenCount = config.getInt("max_lootgen_count");

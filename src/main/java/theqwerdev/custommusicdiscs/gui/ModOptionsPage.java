@@ -6,6 +6,7 @@ import net.minecraft.client.gui.options.components.*;
 import net.minecraft.client.gui.options.data.OptionsPage;
 import net.minecraft.client.gui.options.data.OptionsPages;
 import net.minecraft.core.item.Item;
+import org.lwjgl.opengl.Display;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
@@ -99,7 +100,7 @@ public class ModOptionsPage {
 		saveZip.setAcceptAllFileFilterUsed(false);
 		saveZip.setSelectedFile(new File("./discpack.zip"));
 
-		int dialogResult = saveZip.showSaveDialog(null);
+		int dialogResult = saveZip.showSaveDialog(Display.getParent());
 		if(dialogResult == JFileChooser.APPROVE_OPTION) {
 			File zipFile = saveZip.getSelectedFile();
 
