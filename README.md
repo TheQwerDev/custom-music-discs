@@ -14,6 +14,7 @@ The general structure of the discpack folder is as follows:
 ![image](https://github.com/user-attachments/assets/025d980a-8036-4956-b467-cce4e57806f2)
 
 ### Notes
+- Make sure you use square textures when adding the image file for a disc.
 - The manual method of adding discs allows users to skip adding image files. Discs without custom textures will use a placeholder texture instead. 
 - The placeholder texture can be changed by adding a '.png' file named "disc_placeholder.png" in the item folder of the "CustomMusicDiscsResources" texture pack that automatically gets created on boot.
 - Any change to the discpack will require a restart of the game to reset the item list.
