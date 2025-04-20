@@ -20,7 +20,7 @@ The general structure of the discpack folder is as follows:
 - Any change to the discpack will require a restart of the game to reset the item list.
 
 ## Configuration
-The config file can be found at "[minecraft directory]/config". The variables it stores depends on the type of instance that's running the mod (client or server).
+The config file can be found at "[minecraft directory]/config". The variables it stores depend on the type of instance that's running the mod (client or server).
 Client-side variables can also be changed in the ingame UI.
 
 ### Common Variables:
