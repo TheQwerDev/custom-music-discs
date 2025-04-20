@@ -1,7 +1,7 @@
 package theqwerdev.custommusicdiscs.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiSwitchButton;
+import net.minecraft.client.gui.SwitchElement;
 import net.minecraft.client.gui.options.components.ButtonComponent;
 import net.minecraft.core.lang.I18n;
 import theqwerdev.custommusicdiscs.config.ModConfig;
@@ -13,12 +13,12 @@ public class ConfigBooleanOptionComponent extends ButtonComponent {
 	private Properties properties;
 	private Properties defaultProperties;
 	private final String optionName;
-	private final GuiSwitchButton button;
+	private final SwitchElement button;
 
 	public ConfigBooleanOptionComponent(String translationKey, String optionName) {
 		super(translationKey);
 		this.optionName = optionName;
-		this.button = new GuiSwitchButton(0, 0, 0, 150, 20, false, "", "");
+		this.button = new SwitchElement(0, 0, 0, 150, 20, false, "", "");
 		this.button.setOn(ModConfig.config.getBoolean(optionName));
 		this.button.displayString = this.getDisplayString();
 	}

@@ -1,15 +1,13 @@
 package theqwerdev.custommusicdiscs.item;
 
-import net.minecraft.core.item.ItemRecord;
+import net.minecraft.core.item.ItemDiscMusic;
 
-public class ItemCustomRecord
-	extends ItemRecord {
-
+public class ItemCustomRecord extends ItemDiscMusic {
 	public String translatedName;
 
-	public ItemCustomRecord(String name, int id, String s) {
-		super(name, id, s, null);
-		translatedName = s;
+	public ItemCustomRecord(String name, String namespaceId, int id, String recordName, String displayName) {
+		super(name, namespaceId, id, recordName, null);
+		translatedName = displayName;
 	}
 }
 

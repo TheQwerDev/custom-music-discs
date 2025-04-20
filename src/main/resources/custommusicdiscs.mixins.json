@@ -5,15 +5,14 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "I18nMixin",
-    "EntityCreeperMixin",
+    "MobCreeperMixin",
     "WorldFeatureDungeonMixin",
     "WorldFeatureLabyrinthMixin",
     "interfaces.ConfigHandlerPropertiesAccessor"
   ],
   "client": [
-    "GuiOptionsMixin",
-    "ShortcutComponentMixin",
-    "SoundManagerMixin"
+    "ScreenOptionsMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

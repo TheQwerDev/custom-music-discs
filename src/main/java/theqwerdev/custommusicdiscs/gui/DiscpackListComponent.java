@@ -1,10 +1,11 @@
 package theqwerdev.custommusicdiscs.gui;
 
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.ButtonElement;
 import net.minecraft.client.gui.options.components.ButtonComponent;
 import net.minecraft.client.gui.options.components.OptionsComponent;
-import net.minecraft.client.render.FontRenderer;
+import net.minecraft.client.render.Font;
 import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.texture.Texture;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.sound.SoundCategory;
 import net.minecraft.core.util.collection.Pair;
@@ -42,7 +43,7 @@ public class DiscpackListComponent implements OptionsComponent {
 
 	public void render(int x, int y, int width, int relativeMouseX, int relativeMouseY) {
 		if (this.discpackButtons.isEmpty()) {
-			ButtonComponent.mc.fontRenderer.drawCenteredString(I18n.getInstance().translateKey("custommusicdiscs.options.label.nodiscs"), x + width / 2, y + 4, 0x5F7F7F7F);
+			ButtonComponent.mc.font.drawCenteredString(I18n.getInstance().translateKey("custommusicdiscs.options.label.nodiscs"), x + width / 2, y + 4, 0x5F7F7F7F);
 		}
 
 		for (DiscpackButton button : this.discpackButtons) {
@@ -117,8 +118,8 @@ public class DiscpackListComponent implements OptionsComponent {
 
 	private static class DiscpackButton {
 		private BufferedImage discImageBuffer;
-		private int discImage = -1;
-		private final GuiButton button;
+		private Texture discImage;
+		private final ButtonElement button;
 		public boolean draggable;
 		public final File parentFolder, audioFile, imageFile;
 		public final int height = BUTTON_HEIGHT;
@@ -136,7 +137,7 @@ public class DiscpackListComponent implements OptionsComponent {
 			this.trackNumber = trackNumber;
 			this.xPos = xPos;
 			this.yPos = yPos;
-			this.button = new GuiButton(0, 0, 0, 20, 20, "-");
+			this.button = new ButtonElement(0, 0, 0, 20, 20, "-");
 
 			if(imageFile != null) {
 				try {
@@ -276,7 +277,7 @@ public class DiscpackListComponent implements OptionsComponent {
 
 		public void render(DiscpackListComponent component, int x, int y, int width, int mouseX, int mouseY) {
 			Tessellator tessellator = Tessellator.instance;
-			FontRenderer fontRenderer = ButtonComponent.mc.fontRenderer;
+			Font fontRenderer = ButtonComponent.mc.font;
 			this.setupButton(x, y, width);
 			int xMove, yMove;
 			if (this.isDragged()) {
@@ -304,13 +305,13 @@ public class DiscpackListComponent implements OptionsComponent {
 				GL11.glEnable(3553);
 			}
 
-			if(this.discImageBuffer != null && this.discImage < 0) {
-				discImage = ButtonComponent.mc.renderEngine.allocateAndSetupTexture(discImageBuffer);
+			if(this.discImageBuffer != null && this.discImage == null) {
+				discImage = ButtonComponent.mc.textureManager.loadBufferedTexture(discImageBuffer);
 			}
 			if (this.discImageBuffer != null) {
-				ButtonComponent.mc.renderEngine.bindTexture(this.discImage);
+				ButtonComponent.mc.textureManager.bindTexture(this.discImage);
 			} else {
-				GL11.glBindTexture(3553, ButtonComponent.mc.renderEngine.getTexture("/assets/custommusicdiscs/textures/item/disc_placeholder.png"));
+				GL11.glBindTexture(3553, ButtonComponent.mc.textureManager.loadTexture("/assets/custommusicdiscs/textures/item/disc_placeholder.png").id());
 			}
 
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

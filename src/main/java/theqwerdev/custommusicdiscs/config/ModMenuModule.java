@@ -1,7 +1,7 @@
 package theqwerdev.custommusicdiscs.config;
 
 import io.github.prospector.modmenu.api.ModMenuApi;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.Screen;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.gui.ModOptionsPage;
 
@@ -14,7 +14,7 @@ public class ModMenuModule implements ModMenuApi {
 	}
 
 	@Override
-	public Function<GuiScreen, ? extends GuiScreen> getConfigScreenFactory() {
+	public Function<Screen, ? extends Screen> getConfigScreenFactory() {
 		return ModOptionsPage::getOptionsPage;
 	}
 }

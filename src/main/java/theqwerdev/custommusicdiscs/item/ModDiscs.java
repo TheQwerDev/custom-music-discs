@@ -3,13 +3,14 @@ package theqwerdev.custommusicdiscs.item;
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.tag.ItemTags;
 import net.minecraft.core.util.collection.Pair;
-import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
-import theqwerdev.custommusicdiscs.util.TexturePackGenerator;
+import theqwerdev.custommusicdiscs.config.ModConfig;
+import theqwerdev.custommusicdiscs.util.ResourcePackGenerator;
 import turniplabs.halplibe.helper.ItemBuilder;
-import turniplabs.halplibe.helper.SoundHelper;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,7 +23,7 @@ public class ModDiscs {
 	private static final String[] exts = {".ogg", ".wav", ".mus", ".png"};
 
 	public static int discCount = 0;
-	private static final List<Item> discs = new ArrayList<>();
+	public static final List<Item> discs = new ArrayList<>();
 	private static SortedMap<Integer, File> trackMap;
 
 	public static int getTrackMapSize() {
@@ -151,12 +152,20 @@ public class ModDiscs {
 	}
 
 	private static void registerDiscs() {
+		FileWriter fileWriter = null;
+		try {
+			fileWriter = new FileWriter(ResourcePackGenerator.audioPath + "/sounds.json");
+			fileWriter.append("{\n");
+		} catch (IOException e) {
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
+		}
+
 		for (File track : trackMap.values()) {
 			int trackNumber = Integer.parseInt(track.getName());
 			Pair<File, File> trackData = extractTrackData(track);
 			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
 
-			if(audioFile == null) {
+			if (audioFile == null) {
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + trackNumber);
 				continue;
 			}
@@ -171,13 +180,9 @@ public class ModDiscs {
 				continue;
 			}
 
-			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-				.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/" + (imageFile == null ? "disc_placeholder" : trackNumber))
-				.build(new ItemCustomRecord("record.custom" + trackNumber, startingID + trackNumber - 1, name)));
-			discCount++;
-
+			//CustomMusicDiscsClient.LOGGER.info(CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + trackNumber);
 			try {
-				Path tempPath = Files.copy(audioFile.toPath(), Paths.get(SoundHelper.streamingDirectory.getPath(), audioFile.getName()));
+				Path tempPath = Files.copy(audioFile.toPath(), Paths.get(String.valueOf(ResourcePackGenerator.recordPath), audioFile.getName()));
 				tempPath.toFile().deleteOnExit();
 
 				CustomMusicDiscsClient.LOGGER.info("Imported '" + audioFile.getName() + '\'');
@@ -186,22 +191,75 @@ public class ModDiscs {
 			}
 
 			if (imageFile == null) {
-				if(!ModConfig.silenceImageFileWarnings)
+				if (!ModConfig.silenceImageFileWarnings)
 					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
+			} else {
+				ResourcePackGenerator.addDiscTexture(imageFile, trackNumber);
 			}
-			else {
-				TexturePackGenerator.addDiscTexture(imageFile, trackNumber);
+
+			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+				.build(new ItemCustomRecord("record.custom" + trackNumber,
+					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + trackNumber,
+					startingID + trackNumber - 1,
+					CustomMusicDiscsClient.MOD_ID + ":record.custom" + trackNumber,
+					name)));
+			discCount++;
+
+			//i am NOT learning how to properly write a json file just for this one use case
+			try {
+				fileWriter.append("	\"record.custom" + trackNumber + "\": {\n" +
+								"		\"sounds\": [\n" +
+								"			{\n" +
+								"				\"name\": \"record/" + audioFile.getName() + "\",\n" +
+								"				\"volume\": 0.5,\n" +
+								"				\"attenuation_distance\": 64,\n" +
+								"				\"stream\": true\n" +
+								"			}\n" +
+								"		]\n" +
+								"	},\n");
+			} catch (IOException e) {
+				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
+		}
+
+		try {
+			fileWriter.append("	\"record.placeholder\": {\n" +
+							"		\"sounds\": [\n" +
+							"			{\n" +
+							"				\"name\": \"record/placeholder.ogg\",\n" +
+							"				\"volume\": 0.5,\n" +
+							"				\"attenuation_distance\": 64,\n" +
+							"				\"stream\": true\n" +
+							"			}\n" +
+							"		]\n" +
+							"	}\n" +
+							"}");
+			fileWriter.close();
+		} catch (IOException e) {
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
 
 		//filler discs so multiplayer support doesn't bite me in the ass
 		for(int i = startingID; i < startingID + maxDiscCount; i++) {
 			if(Item.itemsList[i] == null) {
 				discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-					.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
-					.build(new ItemCustomRecord("record.custom" + (i - startingID + 1), i, "placeholder")).withTags(ItemTags.NOT_IN_CREATIVE_MENU));
+					//.setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
+					.build(new ItemCustomRecord("record.custom" + (i - startingID + 1),
+						CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + (i - startingID + 1),
+						i,
+						CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
+						"placeholder"))
+					.withTags(ItemTags.NOT_IN_CREATIVE_MENU));
 			}
 		}
+
+		discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+			.build(new ItemCustomRecord("record.placeholder",
+				CustomMusicDiscsClient.MOD_ID + ":item/record_placeholder",
+				startingID + maxDiscCount,
+				CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
+				"placeholder"))
+			.withTags(ItemTags.NOT_IN_CREATIVE_MENU));
 	}
 
 	public static void initializeItems () {

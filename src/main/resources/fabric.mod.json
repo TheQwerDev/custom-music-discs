@@ -27,6 +27,9 @@
 		"afterClientStart": [
 			"theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient"
 		],
+		"initModels": [
+			"theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient"
+		],
 		"modmenu": [
 			"theqwerdev.custommusicdiscs.config.ModMenuModule"
 		]
@@ -36,8 +39,8 @@
   ],
 	"accessWidener": "custommusicdiscs.accesswidener",
 	"depends": {
-    "fabricloader": ">=0.13.3",
-		"halplibe": ">=4.1.3"
+    "fabricloader": ">=0.15.6-bta.7",
+		"halplibe": ">=5.2.3"
   },
   "suggests": {
   }

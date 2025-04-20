@@ -1,12 +1,12 @@
 package theqwerdev.custommusicdiscs.gui;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.options.GuiOptions;
-import net.minecraft.client.gui.options.components.*;
+import net.minecraft.client.gui.Screen;
+import net.minecraft.client.gui.options.ScreenOptions;
+import net.minecraft.client.gui.options.components.OptionsCategory;
+import net.minecraft.client.gui.options.components.ShortcutComponent;
 import net.minecraft.client.gui.options.data.OptionsPage;
 import net.minecraft.client.gui.options.data.OptionsPages;
-import net.minecraft.core.item.Item;
-import org.lwjgl.opengl.Display;
+import net.minecraft.core.item.Items;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
@@ -15,11 +15,11 @@ import theqwerdev.custommusicdiscs.util.FileUtils;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.zip.ZipOutputStream;
 
 public class ModOptionsPage {
@@ -100,7 +100,7 @@ public class ModOptionsPage {
 		saveZip.setAcceptAllFileFilterUsed(false);
 		saveZip.setSelectedFile(new File("./discpack.zip"));
 
-		int dialogResult = saveZip.showSaveDialog(Display.getParent());
+		int dialogResult = saveZip.showSaveDialog(null);
 		if(dialogResult == JFileChooser.APPROVE_OPTION) {
 			File zipFile = saveZip.getSelectedFile();
 
@@ -123,8 +123,8 @@ public class ModOptionsPage {
 		}
 	}
 
-	public static GuiOptions getOptionsPage(GuiScreen parent) {
-		return new GuiOptions(parent, optionsPage);
+	public static ScreenOptions getOptionsPage(Screen parent) {
+		return new ScreenOptions(parent, optionsPage);
 	}
 
 	public static void registerOptionsPage() {
@@ -134,7 +134,7 @@ public class ModOptionsPage {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
 
-		optionsPage = new OptionsPage("custommusicdiscs.options.title", Item.record13.getDefaultStack())
+		optionsPage = new OptionsPage("custommusicdiscs.options.title", Items.RECORD_13.getDefaultStack())
 			.withComponent(new OptionsCategory("custommusicdiscs.options.category.general")
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.use_song_as_item_name", "use_song_as_item_name"))
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.loop_disc_audio", "loop_disc_audio"))

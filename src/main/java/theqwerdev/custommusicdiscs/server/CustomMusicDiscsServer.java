@@ -13,9 +13,18 @@ public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 		ModConfig.initConfig(true);
 		for(int i = 0; i < ModDiscs.maxDiscCount; i++) {
 			new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-			    .setIcon(CustomMusicDiscsClient.MOD_ID + ":item/disc_placeholder")
-    			.build(
-	   		    	new ItemCustomRecord("record.custom" + (i + 1), ModConfig.itemID + i, "placeholder"));
+    			.build(new ItemCustomRecord("record.custom" + (i + 1),
+					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + (i + 1),
+					ModConfig.itemID + i,
+					CustomMusicDiscsClient.MOD_ID + ":record.custom" + (i + 1),
+					"placeholder"));
 		}
+
+		new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+			.build(new ItemCustomRecord("record.placeholder",
+				CustomMusicDiscsClient.MOD_ID + ":item/record_placeholder",
+				ModConfig.itemID + ModDiscs.maxDiscCount,
+				CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
+				"placeholder"));
 	}
 }
