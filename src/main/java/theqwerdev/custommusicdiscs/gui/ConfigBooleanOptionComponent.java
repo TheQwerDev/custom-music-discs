@@ -10,8 +10,9 @@ import theqwerdev.custommusicdiscs.mixin.interfaces.ConfigHandlerPropertiesAcces
 import java.util.Properties;
 
 public class ConfigBooleanOptionComponent extends ButtonComponent {
-	private Properties properties;
-	private Properties defaultProperties;
+	static ConfigHandlerPropertiesAccessor accessor = ((ConfigHandlerPropertiesAccessor) ModConfig.config);
+	private static final Properties properties = accessor.getProperties();
+	private static final Properties defaultProperties = accessor.getDefaultProperties();
 	private final String optionName;
 	private final SwitchElement button;
 
@@ -47,9 +48,6 @@ public class ConfigBooleanOptionComponent extends ButtonComponent {
 
 	@Override
 	public void init(Minecraft mc) {
-		ConfigHandlerPropertiesAccessor accessor = ((ConfigHandlerPropertiesAccessor) ModConfig.config);
-		properties = accessor.getProperties();
-		defaultProperties = accessor.getDefaultProperties();
 		this.button.setOn(ModConfig.config.getBoolean(optionName));
 		this.button.displayString = this.getDisplayString();
 	}

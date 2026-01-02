@@ -16,26 +16,29 @@ import theqwerdev.custommusicdiscs.item.ItemCustomRecord;
 public class I18nMixin {
 	@Inject(method = "translateKey", at = @At("HEAD"), cancellable = true)
 	public void translateKey(String s, CallbackInfoReturnable<String> cir) {
-		String itemSubstr = s.substring(0, s.length()-5);
-		if(s.contains(CustomMusicDiscsClient.MOD_ID +  ":record")) { //now playing message
-			ItemCustomRecord record = (ItemCustomRecord) Item.itemsList[Item.nameToIdMap.get("item." + CustomMusicDiscsClient.MOD_ID + '.' + s.substring(CustomMusicDiscsClient.MOD_ID.length() + 1))];
-			cir.setReturnValue(record.translatedName);
-		}
-		else if(s.contains("item." + CustomMusicDiscsClient.MOD_ID + ".record")) { //custom disc display name
-			ItemCustomRecord record = (ItemCustomRecord) Item.itemsList[Item.nameToIdMap.get(itemSubstr)];
+		if(s.contains("item." + CustomMusicDiscsClient.MOD_ID + ".record") || s.contains("item.record"))
+		{
+			String itemSubstr = s.substring(0, s.length()-5);
+			if(s.contains(CustomMusicDiscsClient.MOD_ID +  ":record")) { //now playing message
+				ItemCustomRecord record = (ItemCustomRecord) Item.itemsList[Item.nameToIdMap.get("item." + CustomMusicDiscsClient.MOD_ID + '.' + s.substring(CustomMusicDiscsClient.MOD_ID.length() + 1))];
+				cir.setReturnValue(record.translatedName);
+			}
+			else if(s.contains("item." + CustomMusicDiscsClient.MOD_ID + ".record")) { //custom disc display name
+				ItemCustomRecord record = (ItemCustomRecord) Item.itemsList[Item.nameToIdMap.get(itemSubstr)];
 
-			if(s.endsWith("name"))
-				cir.setReturnValue(ModConfig.useSongAsItemName ? record.translatedName : "Custom Music Disc");
-			else if(s.endsWith("desc"))
-				cir.setReturnValue(ModConfig.useSongAsItemName ? "Custom Music Disc" : record.translatedName);
-		}
-		else if(s.contains("item.record")) { //vanilla disc display name
-			ItemDiscMusic record = (ItemDiscMusic) Item.itemsList[Item.nameToIdMap.get(itemSubstr)];
+				if(s.endsWith("name"))
+					cir.setReturnValue(ModConfig.useSongAsItemName ? record.translatedName : "Custom Music Disc");
+				else if(s.endsWith("desc"))
+					cir.setReturnValue(ModConfig.useSongAsItemName ? "Custom Music Disc" : record.translatedName);
+			}
+			else if(s.contains("item.record")) { //vanilla disc display name
+				ItemDiscMusic record = (ItemDiscMusic) Item.itemsList[Item.nameToIdMap.get(itemSubstr)];
 
-			if(s.endsWith("name"))
-				cir.setReturnValue(ModConfig.useSongAsItemName ? Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".desc") : Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".name"));
-			else if(s.endsWith("desc"))
-				cir.setReturnValue(ModConfig.useSongAsItemName ? Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".name") : Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".desc"));
+				if(s.endsWith("name"))
+					cir.setReturnValue(ModConfig.useSongAsItemName ? Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".desc") : Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".name"));
+				else if(s.endsWith("desc"))
+					cir.setReturnValue(ModConfig.useSongAsItemName ? Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".name") : Language.Default.INSTANCE.translateKey(record.getDefaultStack().getItemKey() + ".desc"));
+			}
 		}
 	}
 }
