@@ -10,7 +10,7 @@ import theqwerdev.custommusicdiscs.mixin.interfaces.ConfigHandlerPropertiesAcces
 import java.util.Properties;
 
 public class ConfigBooleanOptionComponent extends ButtonComponent {
-	static ConfigHandlerPropertiesAccessor accessor = ((ConfigHandlerPropertiesAccessor) ModConfig.config);
+	private static final ConfigHandlerPropertiesAccessor accessor = ((ConfigHandlerPropertiesAccessor) ModConfig.config);
 	private static final Properties properties = accessor.getProperties();
 	private static final Properties defaultProperties = accessor.getDefaultProperties();
 	private final String optionName;
