@@ -16,7 +16,7 @@ import theqwerdev.custommusicdiscs.item.ItemCustomRecord;
 public class I18nMixin {
 	@Inject(method = "translateKey", at = @At("HEAD"), cancellable = true)
 	public void translateKey(String s, CallbackInfoReturnable<String> cir) {
-		if(s.contains("item." + CustomMusicDiscsClient.MOD_ID + ".record") || s.contains("item.record"))
+		if(s.contains("item." + CustomMusicDiscsClient.MOD_ID + ".record") || s.contains("item.record") || s.contains("record.custom"))
 		{
 			String itemSubstr = s.substring(0, s.length()-5);
 			if(s.contains(CustomMusicDiscsClient.MOD_ID +  ":record")) { //now playing message
