@@ -80,17 +80,17 @@ public class ModDiscs {
 			int trackNumber = Integer.parseInt(track.getName());
 
 			if (trackNumber <= 0) {
-				CustomMusicDiscsClient.LOGGER.warn("Track ID " + trackNumber + " is invalid. Ignoring.");
+				CustomMusicDiscsClient.LOGGER.warn("Track ID {} is invalid. Ignoring.", trackNumber);
 				continue;
 			}
 
 			if (trackNumber > maxDiscCount) {
-				CustomMusicDiscsClient.LOGGER.warn("Track ID " + trackNumber + " surpasses maximum disc count of " + maxDiscCount + ". Ignoring.");
+				CustomMusicDiscsClient.LOGGER.warn("Track ID {} surpasses maximum disc count of " + maxDiscCount + ". Ignoring.", trackNumber);
 				continue;
 			}
 
 			if (checkedID.get(trackNumber - 1)) {
-				CustomMusicDiscsClient.LOGGER.warn("Duplicate track ID " + trackNumber + " found. Ignoring.");
+				CustomMusicDiscsClient.LOGGER.warn("Duplicate track ID {} found. Ignoring.", trackNumber);
 				continue;
 			}
 
@@ -115,7 +115,7 @@ public class ModDiscs {
 					trackIDRange.set(i - 1);
 					File track = trackMap.get(nextID + 1);
 					if (!track.renameTo(new File("./discpack/" + i)))
-						CustomMusicDiscsClient.LOGGER.warn("Failed to set track ID " + i + " to track ID " + nextID + ".");
+						CustomMusicDiscsClient.LOGGER.warn("Failed to set track ID {} to track ID {}.", i, nextID);
 					else
 						trackMap.put(i, new File("./discpack/" + i));
 
@@ -166,7 +166,7 @@ public class ModDiscs {
 			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
 
 			if (audioFile == null) {
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + trackNumber);
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track {}", trackNumber);
 				continue;
 			}
 
@@ -176,7 +176,7 @@ public class ModDiscs {
 			name = name.substring(0, extPos);
 
 			if (discs.size() >= maxDiscCount) {
-				CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '" + name + '\'');
+				CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '{}'", name);
 				continue;
 			}
 
@@ -185,14 +185,14 @@ public class ModDiscs {
 				Path tempPath = Files.copy(audioFile.toPath(), Paths.get(String.valueOf(ResourcePackGenerator.recordPath), audioFile.getName()));
 				tempPath.toFile().deleteOnExit();
 
-				CustomMusicDiscsClient.LOGGER.info("Imported '" + audioFile.getName() + '\'');
+				CustomMusicDiscsClient.LOGGER.info("Imported '{}'", audioFile.getName());
 			} catch (IOException e) {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 
 			if (imageFile == null) {
 				if (!ModConfig.silenceImageFileWarnings)
-					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
+					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track {}", trackNumber);
 			} else {
 				ResourcePackGenerator.addDiscTexture(imageFile, trackNumber);
 			}
