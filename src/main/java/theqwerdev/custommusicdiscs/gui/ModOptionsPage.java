@@ -60,7 +60,7 @@ public class ModOptionsPage {
 
 			Files.copy(audioFile.toPath(), Paths.get(newDiscFolder.toString(), audioFile.getName()));
 			Files.copy(imageFile.toPath(), Paths.get(newDiscFolder.toString(), "texture.png"));
-			ModDiscs.tracks[ModDiscs.tracksSize + 1] = newDiscFolder.toFile();
+			ModDiscs.tracks[++ModDiscs.tracksSize] = newDiscFolder.toFile();
 			CustomMusicDiscsClient.LOGGER.info("Added Track " + ModDiscs.tracksSize + " (Audio: '" + audioFile.getName() + "', Image: '" + imageFile.getName() + "')");
 		} catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
