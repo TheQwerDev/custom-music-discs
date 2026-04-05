@@ -68,18 +68,7 @@ public class ModDiscs {
 
 		File musicFolder = musicPath.toFile();
 
-		File[] trackListUnfiltered = musicFolder.listFiles((dir, name) -> {
-			if (dir.isDirectory()) {
-				Scanner sc = new Scanner(name.trim());
-				if (!sc.hasNextInt(10))
-					return false;
-
-				sc.nextInt(10);
-				return !sc.hasNext();
-			}
-
-			return false;
-		});
+		File[] trackListUnfiltered = musicFolder.listFiles((dir, name) -> (dir.isDirectory()));
 
 		if(trackListUnfiltered == null) {
 			CustomMusicDiscsClient.LOGGER.warn("No custom discs found.");
@@ -230,7 +219,7 @@ public class ModDiscs {
 						name = prop.getProperty("track_name");
 					}
 					authorName = prop.getProperty("author_name");
-					if (authorName.isEmpty()) {
+					if (authorName != null && authorName.isEmpty()) {
 						authorName = null;
 					}
 				} catch (IOException e) {

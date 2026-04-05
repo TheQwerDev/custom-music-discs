@@ -16,10 +16,12 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.zip.ZipOutputStream;
 
 public class ModOptionsPage {
@@ -40,7 +42,54 @@ public class ModOptionsPage {
 		}
 	};
 
-	private static void selectFiles() {
+	private static String[] prompt() {
+		final String[] result = {null, null};
+		JFrame frame = new JFrame("Input Track Info (can be left empty to use audio file name)");
+		JPanel panel = new JPanel();
+
+		JLabel tfTitle1 = new JLabel("Author Name"), tfTitle2 = new JLabel("Track Name");
+		JTextField tf1 = new JTextField(16), tf2 = new JTextField(16);
+		JButton submit = new JButton("Submit");
+
+		submit.addActionListener(e -> {
+			String s = e.getActionCommand();
+			if(s.equals("Submit")) {
+				synchronized (result) {
+					result[0] = tf1.getText();
+					result[1] = tf2.getText();
+					result.notify();
+				}
+				frame.dispose();
+			}
+		});
+
+		panel.add(tfTitle1); panel.add(tf1);
+		panel.add(tfTitle2); panel.add(tf2);
+		panel.add(submit);
+
+		frame.add(panel);
+		frame.setSize(400, 100);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		frame.setAlwaysOnTop(true);
+		frame.setResizable(false);
+		frame.pack();
+
+		synchronized (result) {
+			while(result[0] == null) {
+				try {
+					result.wait();
+				} catch (InterruptedException e) {
+					CustomMusicDiscsClient.LOGGER.warn(e.toString());
+				}
+			}
+
+			return result;
+		}
+	}
+
+	private static void importDisc() {
 		File audioFile = FileUtils.fileSelectionPrompt("Select an audio file...", audioFileFilter);
 		if(audioFile == null) {
 			CustomMusicDiscsClient.LOGGER.info("Disc importing cancelled.");
@@ -53,15 +102,30 @@ public class ModOptionsPage {
 			return;
 		}
 
+		String[] propInputs = prompt();
+		CustomMusicDiscsClient.LOGGER.error(propInputs[0] + ' ' + propInputs[1]);
 
-		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + (ModDiscs.tracksSize + 1));
+		String audioNameNoExt = audioFile.getName();
+		int extPos = audioNameNoExt.lastIndexOf('.');
+		audioNameNoExt = audioNameNoExt.substring(0, extPos);
+
+		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + audioNameNoExt);
 		try {
 			if(!Files.exists(newDiscFolder))
 				Files.createDirectories(newDiscFolder);
 
 			Files.copy(audioFile.toPath(), Paths.get(newDiscFolder.toString(), audioFile.getName()));
 			Files.copy(imageFile.toPath(), Paths.get(newDiscFolder.toString(), "texture.png"));
-			ModDiscs.tracks[++ModDiscs.tracksSize] = newDiscFolder.toFile();
+
+			Properties prop = new Properties();
+			if(!propInputs[0].isEmpty())
+				prop.setProperty("author_name", propInputs[0]);
+			if(!propInputs[1].isEmpty())
+				prop.setProperty("track_name", propInputs[1]);
+			prop.setProperty("pos", Integer.toString(++ModDiscs.tracksSize));
+			prop.store(new FileWriter(newDiscFolder + "/info.txt"), null);
+
+			ModDiscs.tracks[ModDiscs.tracksSize] = newDiscFolder.toFile();
 			CustomMusicDiscsClient.LOGGER.info("Added Track " + ModDiscs.tracksSize + " (Audio: '" + audioFile.getName() + "', Image: '" + imageFile.getName() + "')");
 		} catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
@@ -145,7 +209,7 @@ public class ModOptionsPage {
 		if(!ModConfig.hideDiscpackSettings) {
 			optionsPage.withComponent(new OptionsCategory("custommusicdiscs.options.category.discpacksettings")
 				.withComponent(new ConfigBooleanOptionComponent("custommusicdiscs.options.button.hide_discpack_settings", "hide_discpack_settings"))
-				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", ModOptionsPage::selectFiles))
+				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", ModOptionsPage::importDisc))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdiscpack", ModOptionsPage::importDiscpack))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.exportdiscpack", ModOptionsPage::exportDiscpack))
 				.withComponent(new DiscpackListComponent()));

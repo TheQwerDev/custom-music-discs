@@ -71,21 +71,28 @@ public class DiscpackListComponent implements OptionsComponent {
 	public void createDiscpackButtons() {
 		this.discpackButtons.clear();
 
-		DiscpackButton prevButton = new DiscpackButton(0, -BUTTON_HEIGHT, false, 0, null, null, null);
+		DiscpackButton prevButton = new DiscpackButton(0, -BUTTON_HEIGHT, false, 0, null, null, null, null);
 
 		ModDiscs.resetTrackList();
 
 		for (int i = 1; i <= ModDiscs.tracksSize; i++) {
 			File track = ModDiscs.tracks[i];
 			File[] trackData = ModDiscs.extractTrackData(track);
-			File audioFile = trackData[0], imageFile = trackData[1];
+			File audioFile = trackData[0], imageFile = trackData[1], propFile = trackData[2];
+
+			Properties prop = new Properties();
+			try {
+				prop.load(Files.newInputStream(propFile.toPath()));
+			} catch (IOException e) {
+				CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			}
 
 			if (audioFile == null)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + i);
 			if (imageFile == null && !ModConfig.silenceImageFileWarnings)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + i);
 
-			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, i, track, audioFile, imageFile);
+			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, i, track, audioFile, imageFile, prop);
 			this.discpackButtons.add(prevButton);
 		}
 	}
@@ -121,6 +128,7 @@ public class DiscpackListComponent implements OptionsComponent {
 		private final ButtonElement button;
 		public boolean draggable;
 		public final File parentFolder, audioFile, imageFile;
+		private final Properties prop;
 		public final int height = BUTTON_HEIGHT;
 		public int trackNumber;
 		public int xPos;
@@ -128,11 +136,12 @@ public class DiscpackListComponent implements OptionsComponent {
 		private int clickX = -1;
 		private int clickY = -1;
 
-		public DiscpackButton(int xPos, int yPos, boolean draggable, int trackNumber, File parentFolder, File audioFile, File imageFile) {
+		public DiscpackButton(int xPos, int yPos, boolean draggable, int trackNumber, File parentFolder, File audioFile, File imageFile, Properties prop) {
 			this.draggable = draggable;
 			this.parentFolder = parentFolder;
 			this.audioFile = audioFile;
 			this.imageFile = imageFile;
+			this.prop = prop;
 			this.trackNumber = trackNumber;
 			this.xPos = xPos;
 			this.yPos = yPos;
@@ -326,18 +335,27 @@ public class DiscpackListComponent implements OptionsComponent {
 			tessellator.addVertexWithUV(x + this.xPos, y + this.yPos, 0.0, 0.0, 0.0);
 			tessellator.draw();
 
-			String trackName;
+			String displayText;
 
 			if(this.audioFile != null) {
-				trackName = this.audioFile.getName();
-				int extPos = trackName.lastIndexOf('.');
-				trackName = trackName.substring(0, extPos);
+				displayText = this.audioFile.getName();
+				int extPos = displayText.lastIndexOf('.');
+				displayText = displayText.substring(0, extPos);
 			}
 			else {
-				trackName = "Unknown Track " + trackNumber;
+				displayText = "Unknown Track " + trackNumber;
 			}
 
-			fontRenderer.drawString(trackName, x + this.xPos + height + 2, y + this.yPos + 1, 0xFFFFFF);
+			String temp = prop.getProperty("track_name");
+			if(temp != null && !temp.isEmpty()) {
+				displayText = temp;
+			}
+			temp = prop.getProperty("author_name");
+			if(temp != null && !temp.isEmpty()) {
+				displayText = temp + " - " + displayText;
+			}
+
+			fontRenderer.drawString(displayText, x + this.xPos + height + 2, y + this.yPos + 1, 0xFFFFFF);
 
 			if (this.isHovered(mouseX, mouseY, width) && component.draggedButton == null) {
 				this.button.drawButton(ButtonComponent.mc, mouseX + x, mouseY + y);
