@@ -20,11 +20,18 @@ public class ResourcePackGenerator {
 	public static final Path recordPath = Paths.get(audioPath + "/record");
 
 	public static void addDiscTexture(File texture, int id) {
+		Path copyPath = Paths.get(texturePath.toString(), "record_custom" + id + ".png");
 		try {
-			Path tempPath = Files.copy(texture.toPath(), Paths.get(texturePath.toString(), "record_custom" + id + ".png"));
+			Path tempPath = Files.copy(texture.toPath(), copyPath);
 			tempPath.toFile().deleteOnExit();
 		} catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			try {
+				Files.delete(copyPath);
+				addDiscTexture(texture, id);
+			} catch (IOException e2) {
+				CustomMusicDiscsClient.LOGGER.warn(e2.toString());
+			}
 		}
 	}
 

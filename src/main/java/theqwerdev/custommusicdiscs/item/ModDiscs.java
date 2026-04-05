@@ -2,7 +2,6 @@ package theqwerdev.custommusicdiscs.item;
 
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.tag.ItemTags;
-import net.minecraft.core.util.collection.Pair;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.util.ResourcePackGenerator;
@@ -20,12 +19,40 @@ public class ModDiscs {
 	public static final int maxDiscCount = 256;
 	private static final int startingID = ModConfig.itemID;
 	public static final Path musicPath = Paths.get("./discpack");
-	private static final String[] exts = {".ogg", ".wav", ".mus", ".png"};
+	private static final String[] exts = {".ogg", ".wav", ".mus", ".png", ".txt"};
 
 	public static int discCount = 0;
 	public static final List<Item> discs = new ArrayList<>();
 	public static int tracksSize = 0;
 	public static final File[] tracks = new File[maxDiscCount + 1];
+
+	public static File[] extractTrackData(File track) {
+		File[] trackData = track.listFiles((dir, name) -> {
+			for (String ext : exts)
+				if (name.toLowerCase().endsWith(ext)) {
+					return true;
+				}
+			return false;
+		});
+
+		if (trackData == null) {
+			return new File[]{null, null, null};
+		}
+
+		File audioFile = null, imageFile = null, propFile = null;
+		for (File data : trackData) {
+			String name = data.getName();
+			if (audioFile == null && !name.endsWith(".png") && !name.endsWith(".txt")) {
+				audioFile = data;
+			} else if (imageFile == null && name.endsWith(".png")) {
+				imageFile = data;
+			} else if (propFile == null && name.endsWith(".txt")) {
+				propFile = data;
+			}
+		}
+
+		return new File[]{audioFile, imageFile, propFile};
+	}
 
 	public static void resetTrackList() {
 		tracksSize = 0;
@@ -62,7 +89,28 @@ public class ModDiscs {
 		int maxTrackID = 0;
 
 		for (File track : trackListUnfiltered) {
-			int trackNumber = Integer.parseInt(track.getName());
+			String folderName = track.getName();
+
+			File[] trackData = extractTrackData(track);
+			File propFile = trackData[2];
+			if(propFile == null) {
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find properties file in folder '{}'. Unable to import!", folderName);
+				continue;
+			}
+			Properties prop = new Properties();
+			int trackNumber;
+			try {
+				prop.load(Files.newInputStream(propFile.toPath()));
+				String trackNumberStr = prop.getProperty("pos");
+				if (trackNumberStr == null) {
+					CustomMusicDiscsClient.LOGGER.warn("Invalid track position for track '{}'. Skipping...", folderName);
+					continue;
+				}
+				trackNumber = Integer.parseInt(trackNumberStr);
+			} catch (IOException e) {
+				CustomMusicDiscsClient.LOGGER.warn(e.toString());
+				continue;
+			}
 
 			if (trackNumber <= 0) {
 				CustomMusicDiscsClient.LOGGER.warn("Track ID {} is invalid. Ignoring.", trackNumber);
@@ -99,40 +147,44 @@ public class ModDiscs {
 					trackIDRange.set(nextID, false);
 					trackIDRange.set(i - 1);
 					File track = tracks[nextID + 1];
-					if (!track.renameTo(new File("./discpack/" + i)))
-						CustomMusicDiscsClient.LOGGER.warn("Failed to set track ID {} to track ID {}.", i, nextID);
-					else
+					String folderName = track.getName();
+					File[] trackData = extractTrackData(track);
+					File propFile = trackData[2];
+					if(propFile == null) {
+						CustomMusicDiscsClient.LOGGER.warn("Failed to find properties file in folder '{}'. Unable to import!", folderName);
+						continue;
+					}
+					Properties prop = new Properties();
+					try {
+						prop.load(Files.newInputStream(propFile.toPath()));
+						prop.setProperty("pos", Integer.toString(i));
+						prop.store(new FileWriter(propFile), null);
 						tracks[i] = new File("./discpack/" + i);
+					} catch (IOException e) {
+						CustomMusicDiscsClient.LOGGER.warn(e.toString());
+					}
 				}
 			}
 		}
 		tracksSize = trackIDRange.cardinality();
 	}
 
-	public static Pair<File, File> extractTrackData(File track) {
-		File[] trackData = track.listFiles((dir, name) -> {
-			for (String ext : exts)
-				if (name.toLowerCase().endsWith(ext)) {
-					return true;
-				}
-			return false;
-		});
+	private static void addAudio(File audioFile) {
+		Path copyPath = Paths.get(String.valueOf(ResourcePackGenerator.recordPath), audioFile.getName());
+		try {
+			Path tempPath = Files.copy(audioFile.toPath(), copyPath);
+			tempPath.toFile().deleteOnExit();
 
-		if (trackData == null) {
-			return Pair.of(null, null);
-		}
-
-		File audioFile = null, imageFile = null;
-		for (File data : trackData) {
-			String name = data.getName();
-			if (audioFile == null && !name.endsWith(".png")) {
-				audioFile = data;
-			} else if (imageFile == null && name.endsWith(".png")) {
-				imageFile = data;
+			CustomMusicDiscsClient.LOGGER.info("Imported '{}'", audioFile.getName());
+		} catch (IOException e) {
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			try {
+				Files.delete(copyPath);
+				addAudio(audioFile);
+			} catch (IOException e2) {
+				CustomMusicDiscsClient.LOGGER.warn(e2.toString());
 			}
 		}
-
-		return Pair.of(audioFile, imageFile);
 	}
 
 	private static void registerDiscs() {
@@ -146,53 +198,68 @@ public class ModDiscs {
 
 		for (int i = 1; i <= tracksSize; i++) {
 			File track = tracks[i];
-			int trackNumber = Integer.parseInt(track.getName());
-			Pair<File, File> trackData = extractTrackData(track);
-			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
+			String folderName = track.getName();
+			File[] trackData = extractTrackData(track);
+			File audioFile = trackData[0], imageFile = trackData[1], propFile = trackData[2];
 
-			if (audioFile == null) {
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track {}", trackNumber);
+			if (discs.size() >= maxDiscCount) {
+				CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '{}'", folderName);
 				continue;
 			}
 
+			if (audioFile == null) {
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file in folder '{}'. Unable to import!", folderName);
+				continue;
+			}
+
+			String authorName;
 			String name = audioFile.getName();
 
 			int extPos = name.lastIndexOf('.');
 			name = name.substring(0, extPos);
 
-			if (discs.size() >= maxDiscCount) {
-				CustomMusicDiscsClient.LOGGER.warn("Reached maximum disc count of " + maxDiscCount + ". Unable to import '{}'", name);
+			if (propFile == null) {
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find properties file in folder '{}'. Unable to import!", folderName);
 				continue;
+			} else {
+				Properties prop = new Properties();
+				try {
+					prop.load(Files.newInputStream(propFile.toPath()));
+					String nameProp = prop.getProperty("track_name");
+					if (nameProp != null && !nameProp.isEmpty()) {
+						name = prop.getProperty("track_name");
+					}
+					authorName = prop.getProperty("author_name");
+					if (authorName.isEmpty()) {
+						authorName = null;
+					}
+				} catch (IOException e) {
+					CustomMusicDiscsClient.LOGGER.warn(e.toString());
+					continue;
+				}
 			}
 
 			//CustomMusicDiscsClient.LOGGER.info(CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + trackNumber);
-			try {
-				Path tempPath = Files.copy(audioFile.toPath(), Paths.get(String.valueOf(ResourcePackGenerator.recordPath), audioFile.getName()));
-				tempPath.toFile().deleteOnExit();
-
-				CustomMusicDiscsClient.LOGGER.info("Imported '{}'", audioFile.getName());
-			} catch (IOException e) {
-				CustomMusicDiscsClient.LOGGER.warn(e.toString());
-			}
+			addAudio(audioFile);
 
 			if (imageFile == null) {
 				if (!ModConfig.silenceImageFileWarnings)
-					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track {}", trackNumber);
+					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track {}", i);
 			} else {
-				ResourcePackGenerator.addDiscTexture(imageFile, trackNumber);
+				ResourcePackGenerator.addDiscTexture(imageFile, i);
 			}
 
 			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
-				.build(new ItemCustomRecord("record.custom" + trackNumber,
-					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + trackNumber,
-					startingID + trackNumber - 1,
-					CustomMusicDiscsClient.MOD_ID + ":record.custom" + trackNumber,
-					name)));
+				.build(new ItemCustomRecord("record.custom" + i,
+					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + i,
+					startingID + i - 1,
+					CustomMusicDiscsClient.MOD_ID + ":record.custom" + i,
+					name, authorName)));
 			discCount++;
 
 			//i am NOT learning how to properly write a json file just for this one use case
 			try {
-				fileWriter.append("	\"record.custom" + trackNumber + "\": {\n" +
+				fileWriter.append("	\"record.custom" + i + "\": {\n" +
 								"		\"sounds\": [\n" +
 								"			{\n" +
 								"				\"name\": \"record/" + audioFile.getName() + "\",\n" +
@@ -233,7 +300,7 @@ public class ModDiscs {
 						CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + (i - startingID + 1),
 						i,
 						CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
-						"placeholder"))
+						"placeholder", null))
 					.withTags(ItemTags.NOT_IN_CREATIVE_MENU));
 			}
 		}
@@ -243,7 +310,7 @@ public class ModDiscs {
 				CustomMusicDiscsClient.MOD_ID + ":item/record_placeholder",
 				startingID + maxDiscCount,
 				CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
-				"placeholder"))
+				"placeholder", null))
 			.withTags(ItemTags.NOT_IN_CREATIVE_MENU));
 	}
 

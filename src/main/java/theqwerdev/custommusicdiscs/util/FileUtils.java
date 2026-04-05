@@ -49,7 +49,6 @@ public class FileUtils {
 	}
 
 	public static void zipFile(File fileToZip, String filename, ZipOutputStream zipOut) throws IOException {
-
 		if(fileToZip.isDirectory()) {
 			if(filename.endsWith("/"))
 				zipOut.putNextEntry(new ZipEntry(filename));

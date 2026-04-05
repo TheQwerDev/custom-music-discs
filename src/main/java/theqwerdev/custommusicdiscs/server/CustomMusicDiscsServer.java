@@ -17,7 +17,7 @@ public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + (i + 1),
 					ModConfig.itemID + i,
 					CustomMusicDiscsClient.MOD_ID + ":record.custom" + (i + 1),
-					"placeholder"));
+					"placeholder", null));
 		}
 
 		new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
@@ -25,6 +25,6 @@ public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 				CustomMusicDiscsClient.MOD_ID + ":item/record_placeholder",
 				ModConfig.itemID + ModDiscs.maxDiscCount,
 				CustomMusicDiscsClient.MOD_ID + ":record.placeholder",
-				"placeholder"));
+				"placeholder", null));
 	}
 }

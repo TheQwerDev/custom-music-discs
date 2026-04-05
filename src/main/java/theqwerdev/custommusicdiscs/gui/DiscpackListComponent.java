@@ -8,7 +8,6 @@ import net.minecraft.client.render.tessellator.Tessellator;
 import net.minecraft.client.render.texture.Texture;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.sound.SoundCategory;
-import net.minecraft.core.util.collection.Pair;
 import org.lwjgl.opengl.GL11;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
@@ -78,16 +77,15 @@ public class DiscpackListComponent implements OptionsComponent {
 
 		for (int i = 1; i <= ModDiscs.tracksSize; i++) {
 			File track = ModDiscs.tracks[i];
-			int trackNumber = Integer.parseInt(track.getName());
-			Pair<File, File> trackData = ModDiscs.extractTrackData(track);
-			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
+			File[] trackData = ModDiscs.extractTrackData(track);
+			File audioFile = trackData[0], imageFile = trackData[1];
 
 			if (audioFile == null)
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + trackNumber);
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + i);
 			if (imageFile == null && !ModConfig.silenceImageFileWarnings)
-				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + trackNumber);
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + i);
 
-			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, trackNumber, track, audioFile, imageFile);
+			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, i, track, audioFile, imageFile);
 			this.discpackButtons.add(prevButton);
 		}
 	}

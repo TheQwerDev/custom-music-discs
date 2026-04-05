@@ -53,6 +53,7 @@ public class ModOptionsPage {
 			return;
 		}
 
+
 		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + (ModDiscs.tracksSize + 1));
 		try {
 			if(!Files.exists(newDiscFolder))
