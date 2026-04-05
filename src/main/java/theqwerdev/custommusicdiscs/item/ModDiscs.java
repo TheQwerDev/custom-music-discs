@@ -24,26 +24,11 @@ public class ModDiscs {
 
 	public static int discCount = 0;
 	public static final List<Item> discs = new ArrayList<>();
-	private static SortedMap<Integer, File> trackMap;
+	public static int tracksSize = 0;
+	public static final File[] tracks = new File[maxDiscCount + 1];
 
-	public static int getTrackMapSize() {
-		return trackMap.size();
-	}
-
-	public static SortedMap<Integer, File> getTrackMap() {
-		return trackMap;
-	}
-
-	public static void addToTrackMap(int key, File value) {
-		trackMap.put(key, value);
-	}
-
-	public static void removeFromTrackMap(int index) {
-		trackMap.remove(index);
-	}
-
-	public static void resetTrackMap() {
-		trackMap = new TreeMap<>();
+	public static void resetTrackList() {
+		tracksSize = 0;
 		BitSet checkedID = new BitSet(maxDiscCount);
 
 		if (!Files.exists(musicPath)) {
@@ -94,7 +79,7 @@ public class ModDiscs {
 				continue;
 			}
 
-			trackMap.put(trackNumber, track);
+			tracks[trackNumber] = track;
 			checkedID.set(trackNumber - 1);
 			if (trackNumber > maxTrackID)
 				maxTrackID = trackNumber;
@@ -113,16 +98,15 @@ public class ModDiscs {
 
 					trackIDRange.set(nextID, false);
 					trackIDRange.set(i - 1);
-					File track = trackMap.get(nextID + 1);
+					File track = tracks[nextID + 1];
 					if (!track.renameTo(new File("./discpack/" + i)))
 						CustomMusicDiscsClient.LOGGER.warn("Failed to set track ID {} to track ID {}.", i, nextID);
 					else
-						trackMap.put(i, new File("./discpack/" + i));
-
-					trackMap.remove(nextID + 1);
+						tracks[i] = new File("./discpack/" + i);
 				}
 			}
 		}
+		tracksSize = trackIDRange.cardinality();
 	}
 
 	public static Pair<File, File> extractTrackData(File track) {
@@ -160,7 +144,8 @@ public class ModDiscs {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
 
-		for (File track : trackMap.values()) {
+		for (int i = 1; i <= tracksSize; i++) {
+			File track = tracks[i];
 			int trackNumber = Integer.parseInt(track.getName());
 			Pair<File, File> trackData = extractTrackData(track);
 			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
@@ -263,7 +248,7 @@ public class ModDiscs {
 	}
 
 	public static void initializeItems () {
-		resetTrackMap();
+		resetTrackList();
 		registerDiscs();
 	}
 }

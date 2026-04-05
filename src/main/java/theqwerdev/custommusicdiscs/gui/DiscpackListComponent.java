@@ -31,8 +31,8 @@ public class DiscpackListComponent implements OptionsComponent {
 	DiscpackButton draggedButton;
 
 	public void tick() {
-		if(this.size != ModDiscs.getTrackMapSize()) {
-			this.size = ModDiscs.getTrackMapSize();
+		if(this.size != ModDiscs.tracksSize) {
+			this.size = ModDiscs.tracksSize;
 			this.createDiscpackButtons();
 		}
 	}
@@ -74,9 +74,10 @@ public class DiscpackListComponent implements OptionsComponent {
 
 		DiscpackButton prevButton = new DiscpackButton(0, -BUTTON_HEIGHT, false, 0, null, null, null);
 
-		ModDiscs.resetTrackMap();
+		ModDiscs.resetTrackList();
 
-		for (File track : ModDiscs.getTrackMap().values()) {
+		for (int i = 1; i <= ModDiscs.tracksSize; i++) {
+			File track = ModDiscs.tracks[i];
 			int trackNumber = Integer.parseInt(track.getName());
 			Pair<File, File> trackData = ModDiscs.extractTrackData(track);
 			File audioFile = trackData.getLeft(), imageFile = trackData.getRight();
@@ -212,25 +213,29 @@ public class DiscpackListComponent implements OptionsComponent {
 		}
 
 		private void shiftDisc(File trackToShift, int shiftAmount) {
-			if (!ModDiscs.getTrackMap().containsValue(trackToShift) || shiftAmount == 0)
+			boolean containsTrack = false;
+			for (File track : ModDiscs.tracks)
+				if (track == trackToShift) {
+					containsTrack = true;
+					break;
+				}
+
+			if (!containsTrack || shiftAmount == 0)
 				return;
 
 			int newIndex = this.trackNumber + shiftAmount;
 			if (newIndex < 1)
 				newIndex = 1;
-			if (newIndex > ModDiscs.getTrackMapSize())
-				newIndex = ModDiscs.getTrackMapSize();
-
-			ModDiscs.removeFromTrackMap(this.trackNumber);
-			Object[] trackArray = ModDiscs.getTrackMap().values().toArray();
+			if (newIndex > ModDiscs.tracksSize)
+				newIndex = ModDiscs.tracksSize;
 
 			try {
 				Files.move(trackToShift.toPath(), Paths.get("./discpack/temp"));
 				trackToShift = new File("./discpack/temp");
 
 				if (shiftAmount > 0) {
-					for (int i = 0; i < trackArray.length; i++) {
-						File track = (File) trackArray[i];
+					for (int i = 1; i <= ModDiscs.tracksSize; i++) {
+						File track = ModDiscs.tracks[i];
 
 						int trackNumber = Integer.parseInt(track.getName());
 						if (trackNumber <= newIndex && trackNumber > this.trackNumber) {
@@ -239,8 +244,8 @@ public class DiscpackListComponent implements OptionsComponent {
 					}
 				}
 				else {
-					for (int i = trackArray.length - 1; i >= 0; i--) {
-						File track = (File) trackArray[i];
+					for (int i = ModDiscs.tracksSize; i >= 1; i--) {
+						File track = ModDiscs.tracks[i];
 
 						int trackNumber = Integer.parseInt(track.getName());
 						if (trackNumber >= newIndex && trackNumber < this.trackNumber) {
@@ -257,7 +262,7 @@ public class DiscpackListComponent implements OptionsComponent {
 		}
 
 		public void deleteDisc(DiscpackListComponent component) {
-			ModDiscs.removeFromTrackMap(Integer.parseInt(this.parentFolder.getName()));
+			ModDiscs.tracksSize--;
 			FileUtils.deleteDirectory(this.parentFolder);
 			component.draggedButton = null;
 			component.createDiscpackButtons();

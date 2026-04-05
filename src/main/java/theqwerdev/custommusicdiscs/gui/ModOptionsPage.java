@@ -53,15 +53,15 @@ public class ModOptionsPage {
 			return;
 		}
 
-		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + (ModDiscs.getTrackMapSize() + 1));
+		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + (ModDiscs.tracksSize + 1));
 		try {
 			if(!Files.exists(newDiscFolder))
 				Files.createDirectories(newDiscFolder);
 
 			Files.copy(audioFile.toPath(), Paths.get(newDiscFolder.toString(), audioFile.getName()));
 			Files.copy(imageFile.toPath(), Paths.get(newDiscFolder.toString(), "texture.png"));
-			ModDiscs.addToTrackMap(ModDiscs.getTrackMapSize() + 1, newDiscFolder.toFile());
-			CustomMusicDiscsClient.LOGGER.info("Added Track " + ModDiscs.getTrackMapSize() + " (Audio: '" + audioFile.getName() + "', Image: '" + imageFile.getName() + "')");
+			ModDiscs.tracks[ModDiscs.tracksSize + 1] = newDiscFolder.toFile();
+			CustomMusicDiscsClient.LOGGER.info("Added Track " + ModDiscs.tracksSize + " (Audio: '" + audioFile.getName() + "', Image: '" + imageFile.getName() + "')");
 		} catch (IOException e) {
 			CustomMusicDiscsClient.LOGGER.warn(e.toString());
 		}
@@ -85,7 +85,7 @@ public class ModOptionsPage {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 
-			ModDiscs.resetTrackMap();
+			ModDiscs.resetTrackList();
 		}
 		else {
 			CustomMusicDiscsClient.LOGGER.info("Discpack importing cancelled.");
