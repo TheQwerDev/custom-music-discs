@@ -26,6 +26,7 @@ import java.util.zip.ZipOutputStream;
 
 public class ModOptionsPage {
 	public static OptionsPage optionsPage;
+	private static final DiscpackListComponent discpackList = new DiscpackListComponent();
 	private static final String[] exts = {".ogg", ".wav", ".mus"};
 	private static final FileFilter audioFileFilter = new FileFilter() {
 		@Override
@@ -42,7 +43,7 @@ public class ModOptionsPage {
 		}
 	};
 
-	private static String[] prompt() {
+	private static String[] promptNames() {
 		final String[] result = {null, null};
 		JFrame frame = new JFrame("Input Track Info (can be left empty to use audio file name)");
 		JPanel panel = new JPanel();
@@ -102,14 +103,20 @@ public class ModOptionsPage {
 			return;
 		}
 
-		String[] propInputs = prompt();
-		CustomMusicDiscsClient.LOGGER.error(propInputs[0] + ' ' + propInputs[1]);
+		String[] propInputs = promptNames();
 
-		String audioNameNoExt = audioFile.getName();
-		int extPos = audioNameNoExt.lastIndexOf('.');
-		audioNameNoExt = audioNameNoExt.substring(0, extPos);
+		String folderName;
+		if(propInputs[1].isEmpty()) {
+			folderName = audioFile.getName();
+			int extPos = folderName.lastIndexOf('.');
+			folderName = folderName.substring(0, extPos);
+		} else {
+			folderName = FileUtils.convertToWinStr(propInputs[1]);
+			if(!propInputs[0].isEmpty())
+				folderName = FileUtils.convertToWinStr(propInputs[0]) + " - " + folderName;
+		}
 
-		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + audioNameNoExt);
+		Path newDiscFolder = Paths.get(ModDiscs.musicPath + "/" + folderName);
 		try {
 			if(!Files.exists(newDiscFolder))
 				Files.createDirectories(newDiscFolder);
@@ -123,7 +130,9 @@ public class ModOptionsPage {
 			if(!propInputs[1].isEmpty())
 				prop.setProperty("track_name", propInputs[1]);
 			prop.setProperty("pos", Integer.toString(++ModDiscs.tracksSize));
-			prop.store(new FileWriter(newDiscFolder + "/info.txt"), null);
+			FileWriter propWriter = new FileWriter(newDiscFolder + "/info.txt");
+			prop.store(propWriter, null);
+			propWriter.close();
 
 			ModDiscs.tracks[ModDiscs.tracksSize] = newDiscFolder.toFile();
 			CustomMusicDiscsClient.LOGGER.info("Added Track " + ModDiscs.tracksSize + " (Audio: '" + audioFile.getName() + "', Image: '" + imageFile.getName() + "')");
@@ -150,7 +159,7 @@ public class ModOptionsPage {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 
-			ModDiscs.resetTrackList();
+			discpackList.createDiscpackButtons();
 		}
 		else {
 			CustomMusicDiscsClient.LOGGER.info("Discpack importing cancelled.");
@@ -212,7 +221,7 @@ public class ModOptionsPage {
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdisc", ModOptionsPage::importDisc))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.importdiscpack", ModOptionsPage::importDiscpack))
 				.withComponent(new ShortcutComponent("custommusicdiscs.options.button.exportdiscpack", ModOptionsPage::exportDiscpack))
-				.withComponent(new DiscpackListComponent()));
+				.withComponent(discpackList));
 		}
 
 		OptionsPages.register(optionsPage);

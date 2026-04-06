@@ -1,5 +1,7 @@
 package theqwerdev.custommusicdiscs.util;
 
+import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
@@ -11,6 +13,14 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class FileUtils {
+	private static final char[] illegalChars = {'\\', '/', ':', '*', '?', '\"', '<', '>', '|'};
+	public static String convertToWinStr(String str) {
+		for (char c : illegalChars) {
+			str = str.replace(c, '_');
+		}
+		return str;
+	}
+
 	public static File fileSelectionPrompt(String dialogTitle, FileFilter filter) {
 		File file = null;
 		JFileChooser fileChooser = new JFileChooser(".");
@@ -32,7 +42,13 @@ public class FileUtils {
 			for(File file : files)
 				deleteDirectory(file);
 
-		return dir.delete();
+		try {
+			Files.delete(dir.toPath());
+			return true;
+		} catch (IOException e) {
+			CustomMusicDiscsClient.LOGGER.warn(e.toString());
+			return false;
+		}
 	}
 
 	public static File fileFromZip(File destDir, ZipEntry zipEntry) throws IOException {

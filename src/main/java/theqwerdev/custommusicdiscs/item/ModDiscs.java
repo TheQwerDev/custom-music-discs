@@ -2,12 +2,15 @@ package theqwerdev.custommusicdiscs.item;
 
 import net.minecraft.core.item.Item;
 import net.minecraft.core.item.tag.ItemTags;
+import net.minecraft.core.net.command.TextFormatting;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.util.ResourcePackGenerator;
 import turniplabs.halplibe.helper.ItemBuilder;
 
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,6 +82,9 @@ public class ModDiscs {
 
 		for (File track : trackListUnfiltered) {
 			String folderName = track.getName();
+			if (!track.isDirectory()) {
+				continue;
+			}
 
 			File[] trackData = extractTrackData(track);
 			File propFile = trackData[2];
@@ -89,7 +95,9 @@ public class ModDiscs {
 			Properties prop = new Properties();
 			int trackNumber;
 			try {
-				prop.load(Files.newInputStream(propFile.toPath()));
+				FileInputStream propInputStream = new FileInputStream(propFile);
+				prop.load(propInputStream);
+				propInputStream.close();
 				String trackNumberStr = prop.getProperty("pos");
 				if (trackNumberStr == null) {
 					CustomMusicDiscsClient.LOGGER.warn("Invalid track position for track '{}'. Skipping...", folderName);
@@ -145,10 +153,14 @@ public class ModDiscs {
 					}
 					Properties prop = new Properties();
 					try {
-						prop.load(Files.newInputStream(propFile.toPath()));
+						FileInputStream propInputStream = new FileInputStream(propFile);
+						prop.load(propInputStream);
+						propInputStream.close();
 						prop.setProperty("pos", Integer.toString(i));
-						prop.store(new FileWriter(propFile), null);
-						tracks[i] = new File("./discpack/" + i);
+						FileWriter propWriter = new FileWriter(propFile);
+						prop.store(propWriter, null);
+						propWriter.close();
+						tracks[i] = track;
 					} catch (IOException e) {
 						CustomMusicDiscsClient.LOGGER.warn(e.toString());
 					}
@@ -201,9 +213,9 @@ public class ModDiscs {
 				continue;
 			}
 
-			String authorName;
-			String name = audioFile.getName();
+			String authorName, volume, style;
 
+			String name = audioFile.getName();
 			int extPos = name.lastIndexOf('.');
 			name = name.substring(0, extPos);
 
@@ -213,18 +225,61 @@ public class ModDiscs {
 			} else {
 				Properties prop = new Properties();
 				try {
-					prop.load(Files.newInputStream(propFile.toPath()));
-					String nameProp = prop.getProperty("track_name");
-					if (nameProp != null && !nameProp.isEmpty()) {
-						name = prop.getProperty("track_name");
-					}
-					authorName = prop.getProperty("author_name");
-					if (authorName != null && authorName.isEmpty()) {
-						authorName = null;
-					}
+					FileInputStream propInputStream = new FileInputStream(propFile);
+					prop.load(propInputStream);
+					propInputStream.close();
 				} catch (IOException e) {
 					CustomMusicDiscsClient.LOGGER.warn(e.toString());
 					continue;
+				}
+
+				String nameProp = prop.getProperty("track_name");
+				if (nameProp != null && !nameProp.isEmpty()) {
+					name = prop.getProperty("track_name");
+				}
+				authorName = prop.getProperty("author_name");
+				if (authorName != null && authorName.isEmpty()) {
+					authorName = null;
+				}
+				volume = prop.getProperty("volume");
+				if (volume == null || volume.isEmpty()) {
+					volume = "0.5";
+				} else {
+					try {
+						if (Float.parseFloat(volume) < 0) {
+							volume = "0.5";
+						}
+					} catch (NumberFormatException e) {
+						CustomMusicDiscsClient.LOGGER.warn(e.toString());
+						volume = "0.5";
+					}
+				}
+				style = prop.getProperty("style");
+				if (style != null && !style.isEmpty()) {
+					String[] formats = style.split(";");
+					style = "";
+					for (int j = 0; j < formats.length; j++) {
+						formats[j] = formats[j].trim().toLowerCase();
+					}
+
+					for(TextFormatting textFormat : TextFormatting.FORMATTINGS) {
+						String[] textFormatNames = textFormat.getNames();
+						for(int j = 0; j < textFormatNames.length; j++) {
+							textFormatNames[j] = textFormatNames[j].toLowerCase();
+						}
+						for(String formatName : textFormatNames) {
+							for(String format : formats) {
+								if(Objects.equals(format, formatName)) {
+									style += textFormat;
+								}
+							}
+						}
+					}
+
+					name = style + name;
+					if (authorName != null) {
+						authorName = style + authorName;
+					}
 				}
 			}
 
@@ -233,7 +288,7 @@ public class ModDiscs {
 
 			if (imageFile == null) {
 				if (!ModConfig.silenceImageFileWarnings)
-					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track {}", i);
+					CustomMusicDiscsClient.LOGGER.warn("Failed to find image file in folder '{}'", folderName);
 			} else {
 				ResourcePackGenerator.addDiscTexture(imageFile, i);
 			}
@@ -252,7 +307,7 @@ public class ModDiscs {
 								"		\"sounds\": [\n" +
 								"			{\n" +
 								"				\"name\": \"record/" + audioFile.getName() + "\",\n" +
-								"				\"volume\": 0.5,\n" +
+								"				\"volume\": " + volume + ",\n" +
 								"				\"attenuation_distance\": 64,\n" +
 								"				\"stream\": true\n" +
 								"			}\n" +

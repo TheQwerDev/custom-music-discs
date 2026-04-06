@@ -16,10 +16,7 @@ import theqwerdev.custommusicdiscs.util.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.*;
 
 //a lot of reused SelectedTexturePackListComponent code here lol
@@ -71,7 +68,7 @@ public class DiscpackListComponent implements OptionsComponent {
 	public void createDiscpackButtons() {
 		this.discpackButtons.clear();
 
-		DiscpackButton prevButton = new DiscpackButton(0, -BUTTON_HEIGHT, false, 0, null, null, null, null);
+		DiscpackButton prevButton = null;
 
 		ModDiscs.resetTrackList();
 
@@ -80,19 +77,21 @@ public class DiscpackListComponent implements OptionsComponent {
 			File[] trackData = ModDiscs.extractTrackData(track);
 			File audioFile = trackData[0], imageFile = trackData[1], propFile = trackData[2];
 
-			Properties prop = new Properties();
-			try {
-				prop.load(Files.newInputStream(propFile.toPath()));
-			} catch (IOException e) {
-				CustomMusicDiscsClient.LOGGER.warn(e.toString());
-			}
-
-			if (audioFile == null)
+			if (audioFile == null) {
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find audio file for track " + i);
+				continue;
+			}
 			if (imageFile == null && !ModConfig.silenceImageFileWarnings)
 				CustomMusicDiscsClient.LOGGER.warn("Failed to find image file for track " + i);
+			if(propFile == null) {
+				CustomMusicDiscsClient.LOGGER.warn("Failed to find properties file for track" + i);
+				continue;
+			}
 
-			prevButton = new DiscpackButton(0, prevButton.yPos + BUTTON_HEIGHT + 3, true, i, track, audioFile, imageFile, prop);
+			int prevYPos = -BUTTON_HEIGHT;
+			if(prevButton != null)
+				prevYPos = prevButton.yPos;
+			prevButton = new DiscpackButton(0, prevYPos + BUTTON_HEIGHT + 3, true, i, track, audioFile, imageFile, propFile);
 			this.discpackButtons.add(prevButton);
 		}
 	}
@@ -127,7 +126,7 @@ public class DiscpackListComponent implements OptionsComponent {
 		private Texture discImage;
 		private final ButtonElement button;
 		public boolean draggable;
-		public final File parentFolder, audioFile, imageFile;
+		public final File parentFolder, audioFile, imageFile, propFile;
 		private final Properties prop;
 		public final int height = BUTTON_HEIGHT;
 		public int trackNumber;
@@ -136,16 +135,27 @@ public class DiscpackListComponent implements OptionsComponent {
 		private int clickX = -1;
 		private int clickY = -1;
 
-		public DiscpackButton(int xPos, int yPos, boolean draggable, int trackNumber, File parentFolder, File audioFile, File imageFile, Properties prop) {
+		public DiscpackButton(int xPos, int yPos, boolean draggable, int trackNumber, File parentFolder, File audioFile, File imageFile, File propFile) {
 			this.draggable = draggable;
 			this.parentFolder = parentFolder;
 			this.audioFile = audioFile;
 			this.imageFile = imageFile;
-			this.prop = prop;
+			this.propFile = propFile;
 			this.trackNumber = trackNumber;
 			this.xPos = xPos;
 			this.yPos = yPos;
 			this.button = new ButtonElement(0, 0, 0, 20, 20, "-");
+
+			prop = new Properties();
+			if (propFile != null) {
+				try {
+					FileInputStream propInputStream = new FileInputStream(propFile);
+					prop.load(propInputStream);
+					propInputStream.close();
+				} catch (IOException e) {
+					CustomMusicDiscsClient.LOGGER.warn(e.toString());
+				}
+			}
 
 			if(imageFile != null) {
 				try {
@@ -236,40 +246,62 @@ public class DiscpackListComponent implements OptionsComponent {
 			if (newIndex > ModDiscs.tracksSize)
 				newIndex = ModDiscs.tracksSize;
 
-			try {
-				Files.move(trackToShift.toPath(), Paths.get("./discpack/temp"));
-				trackToShift = new File("./discpack/temp");
+			if (shiftAmount > 0) {
+				for (int i = 1; i <= ModDiscs.tracksSize; i++) {
+					File track = ModDiscs.tracks[i];
 
-				if (shiftAmount > 0) {
-					for (int i = 1; i <= ModDiscs.tracksSize; i++) {
-						File track = ModDiscs.tracks[i];
-
-						int trackNumber = Integer.parseInt(track.getName());
-						if (trackNumber <= newIndex && trackNumber > this.trackNumber) {
-							Files.move(track.toPath(), Paths.get("./discpack/", Integer.toString(trackNumber - 1)));
+					if (i <= newIndex && i > this.trackNumber) {
+						File[] movedTrackData = ModDiscs.extractTrackData(track);
+						File movedPropFile = movedTrackData[2];
+						Properties movedProp = new Properties();
+						try {
+							FileInputStream propInputStream = new FileInputStream(movedPropFile);
+							movedProp.load(propInputStream);
+							propInputStream.close();
+							movedProp.setProperty("pos", Integer.toString(i - 1));
+							FileWriter movedPropWriter = new FileWriter(movedPropFile);
+							movedProp.store(movedPropWriter, null);
+							movedPropWriter.close();
+						} catch (IOException e) {
+							CustomMusicDiscsClient.LOGGER.warn(e.toString());
 						}
 					}
 				}
-				else {
-					for (int i = ModDiscs.tracksSize; i >= 1; i--) {
-						File track = ModDiscs.tracks[i];
-
-						int trackNumber = Integer.parseInt(track.getName());
-						if (trackNumber >= newIndex && trackNumber < this.trackNumber) {
-							Files.move(track.toPath(), Paths.get("./discpack/", Integer.toString(trackNumber + 1)));
-						}
-					}
-				}
-
-				Files.move(trackToShift.toPath(), Paths.get("./discpack/", Integer.toString(newIndex)));
 			}
-			catch (IOException e) {
+			else {
+				for (int i = ModDiscs.tracksSize; i >= 1; i--) {
+					File track = ModDiscs.tracks[i];
+
+					if (i >= newIndex && i < this.trackNumber) {
+						File[] movedTrackData = ModDiscs.extractTrackData(track);
+						File movedPropFile = movedTrackData[2];
+						Properties movedProp = new Properties();
+						try {
+							FileInputStream propInputStream = new FileInputStream(movedPropFile);
+							movedProp.load(propInputStream);
+							propInputStream.close();
+							movedProp.setProperty("pos", Integer.toString(i + 1));
+							FileWriter movedPropWriter = new FileWriter(movedPropFile);
+							movedProp.store(movedPropWriter, null);
+							movedPropWriter.close();
+						} catch (IOException e) {
+							CustomMusicDiscsClient.LOGGER.warn(e.toString());
+						}
+					}
+				}
+			}
+
+			try {
+				prop.setProperty("pos", Integer.toString(newIndex));
+				FileWriter propWriter = new FileWriter(propFile);
+				prop.store(propWriter, null);
+				propWriter.close();
+			} catch (IOException e) {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 			}
 		}
 
 		public void deleteDisc(DiscpackListComponent component) {
-			ModDiscs.tracksSize--;
 			FileUtils.deleteDirectory(this.parentFolder);
 			component.draggedButton = null;
 			component.createDiscpackButtons();
@@ -336,15 +368,9 @@ public class DiscpackListComponent implements OptionsComponent {
 			tessellator.draw();
 
 			String displayText;
-
-			if(this.audioFile != null) {
-				displayText = this.audioFile.getName();
-				int extPos = displayText.lastIndexOf('.');
-				displayText = displayText.substring(0, extPos);
-			}
-			else {
-				displayText = "Unknown Track " + trackNumber;
-			}
+			displayText = this.audioFile.getName();
+			int extPos = displayText.lastIndexOf('.');
+			displayText = displayText.substring(0, extPos);
 
 			String temp = prop.getProperty("track_name");
 			if(temp != null && !temp.isEmpty()) {
