@@ -6,6 +6,9 @@ Custom Music Discs only supports the audio file extensions that Minecraft BTA do
 NOTE FOR SERVER USAGE: Every player on the server is required to have the exact same audio files (with the exact same discpack order) for songs to play properly for everybody.
 
 **This readme only applies for mod versions 3.2.5 and above!**
+
+Old readme for pre-3.2.5 versions can be found ![here](https://github.com/TheQwerDev/custom-music-discs/blob/672fcc61257839480905b3c2fb5d07e8d192d0a0/README.md).
+
 ## Adding Discs
 Adding custom discs can be done in two ways:
 - Through the ingame UI (Options -> Music Discs). You can either add discs one by one with the "Import Disc" button, or you can add an entire discpack created by another user with the "Import Discpack" button. You can also export discpacks so that other people can easily use them!
