@@ -3,7 +3,7 @@ This mod allows you to add custom discs to play on your jukebox by simply import
 
 Custom Music Discs only supports the audio file extensions that Minecraft BTA does. (.ogg, .wav, .mus)
 
-NOTE FOR SERVER USAGE: Every player on the server is required to have the exact same audio files (with the exact same discpack order) for songs to play properly for everybody.
+NOTE FOR SERVER USAGE: Every player on the server is required to have the exact same audio files (with the exact same discpack order) for songs to play properly for everybody. The mod needs to be installed on the server but storing audio files on it is not required due to the client-sided nature of disc items.
 
 **This readme only applies for mod versions 3.2.5 and above!**
 
