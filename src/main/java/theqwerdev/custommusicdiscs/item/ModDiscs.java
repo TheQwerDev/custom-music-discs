@@ -99,12 +99,12 @@ public class ModDiscs {
 				prop.load(propInputStream);
 				propInputStream.close();
 				String trackNumberStr = prop.getProperty("pos");
-				if (trackNumberStr == null) {
+				if (trackNumberStr == null || trackNumberStr.isEmpty()) {
 					CustomMusicDiscsClient.LOGGER.warn("Invalid track position for track '{}'. Skipping...", folderName);
 					continue;
 				}
 				trackNumber = Integer.parseInt(trackNumberStr);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				CustomMusicDiscsClient.LOGGER.warn(e.toString());
 				continue;
 			}
