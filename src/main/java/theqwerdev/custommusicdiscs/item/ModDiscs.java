@@ -7,7 +7,8 @@ import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.util.ResourcePackGenerator;
 import turniplabs.halplibe.helper.ItemBuilder;
-
+import turniplabs.halplibe.helper.creativeInventory.CreativeInventoryCategory;
+import turniplabs.halplibe.helper.creativeInventory.CreativeInventoryPlacement;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -294,6 +295,7 @@ public class ModDiscs {
 			}
 
 			discs.add(new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+				.setCreativeInventoryPlacement(new CreativeInventoryPlacement.Category(CreativeInventoryCategory.MISCELLANEOUS))
 				.build(new ItemCustomRecord("record.custom" + i,
 					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + i,
 					startingID + i - 1,

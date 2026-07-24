@@ -8,6 +8,7 @@
     "MobCreeperMixin",
     "WorldFeatureDungeonMixin",
     "WorldFeatureLabyrinthMixin",
+    "MinecraftMixin",
     "interfaces.ConfigHandlerPropertiesAccessor"
   ],
   "client": [

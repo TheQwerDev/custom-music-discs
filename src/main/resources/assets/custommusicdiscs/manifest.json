@@ -3,7 +3,7 @@
         "name": "CustomMusicDiscsResources",
         "line1": "Dynamically created resource pack",
         "line2": "for custom disc textures and audio.",
-        "packVersion": "7.3",
-        "format": 3
+        "packVersion": "8.0",
+        "format": 4
     }
 }

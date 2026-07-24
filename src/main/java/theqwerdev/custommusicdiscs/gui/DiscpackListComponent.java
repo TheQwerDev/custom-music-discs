@@ -1,13 +1,18 @@
 package theqwerdev.custommusicdiscs.gui;
 
 import net.minecraft.client.gui.ButtonElement;
+import net.minecraft.client.gui.options.ScreenOptions;
 import net.minecraft.client.gui.options.components.ButtonComponent;
 import net.minecraft.client.gui.options.components.OptionsComponent;
-import net.minecraft.client.render.Font;
-import net.minecraft.client.render.tessellator.Tessellator;
+import net.minecraft.client.render.font.FontRenderer;
+import net.minecraft.client.render.renderer.GLRenderer;
+import net.minecraft.client.render.renderer.Shaders;
+import net.minecraft.client.render.tessellator.TessellatorGeneral;
 import net.minecraft.client.render.texture.Texture;
 import net.minecraft.core.lang.I18n;
 import net.minecraft.core.sound.SoundCategory;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import theqwerdev.custommusicdiscs.client.CustomMusicDiscsClient;
 import theqwerdev.custommusicdiscs.config.ModConfig;
@@ -33,13 +38,18 @@ public class DiscpackListComponent implements OptionsComponent {
 		}
 	}
 
+	public @Nullable String getTooltipTranslationKey() {
+		return null;
+	}
+
 	public int getHeight() {
 		return this.discpackButtons.isEmpty() ? 20 : 3 + this.discpackButtons.size() * (BUTTON_HEIGHT + 3);
 	}
 
-	public void render(int x, int y, int width, int relativeMouseX, int relativeMouseY) {
+	@Override
+	public void render(@NotNull ScreenOptions screenOptions, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
 		if (this.discpackButtons.isEmpty()) {
-			ButtonComponent.mc.font.drawCenteredString(I18n.getInstance().translateKey("custommusicdiscs.options.label.nodiscs"), x + width / 2, y + 4, 0x5F7F7F7F);
+			ButtonComponent.mc.font.renderCentered(I18n.getInstance().translateKey("custommusicdiscs.options.label.nodiscs"), x + width / 2, y + 4).setShadow().setColor(0x5F7F7F7F).call();
 		}
 
 		for (DiscpackButton button : this.discpackButtons) {
@@ -320,8 +330,7 @@ public class DiscpackListComponent implements OptionsComponent {
 		}
 
 		public void render(DiscpackListComponent component, int x, int y, int width, int mouseX, int mouseY) {
-			Tessellator tessellator = Tessellator.instance;
-			Font fontRenderer = ButtonComponent.mc.font;
+			TessellatorGeneral tessellator = GLRenderer.getTessellator();
 			this.setupButton(x, y, width);
 			int xMove, yMove;
 			if (this.isDragged()) {
@@ -332,21 +341,30 @@ public class DiscpackListComponent implements OptionsComponent {
 			}
 
 			if (this.isDragged() || this.isHovered(mouseX, mouseY, width) && component.draggedButton == null) {
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				GL11.glDisable(3553);
+				GLRenderer.pushFrame();
+				GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+				GLRenderer.setShader(Shaders.COLOR);
 				tessellator.startDrawingQuads();
-				tessellator.setColorOpaque_I(0x7F808080);
-				tessellator.addVertexWithUV(x + this.xPos - 2, y + this.yPos + height + 2, 0.0, 0.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos + width + 2, y + this.yPos + height + 2, 0.0, 1.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos + width + 2, y + this.yPos - 2, 0.0, 1.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos - 2, y + this.yPos - 2, 0.0, 0.0, 0.0);
-				tessellator.setColorOpaque_I(0);
-				tessellator.addVertexWithUV(x + this.xPos - 1, y + this.yPos + height + 1, 0.0, 0.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos + width + 1, y + this.yPos + height + 1, 0.0, 1.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos + width + 1, y + this.yPos - 1, 0.0, 1.0, 1.0);
-				tessellator.addVertexWithUV(x + this.xPos - 1, y + this.yPos - 1, 0.0, 0.0, 0.0);
+				tessellator.setColorOpaque1i(0x7F808080);
+				int xVert = x + this.xPos - 2;
+				int yVert = y + this.yPos;
+				tessellator.addVertexWithUV(xVert, yVert + height + 2, 0.0F, 0.0F, 1.0F);
+				xVert = x + this.xPos + width + 2;
+				yVert = y + this.yPos;
+				tessellator.addVertexWithUV(xVert, yVert + height + 2, 0.0F, 1.0F, 1.0F);
+				tessellator.addVertexWithUV(x + this.xPos + width + 2, y + this.yPos - 2, 0.0F, 1.0F, 1.0F);
+				tessellator.addVertexWithUV(x + this.xPos - 2, y + this.yPos - 2, 0.0F, 0.0F, 0.0F);
+				tessellator.setColorOpaque1i(0);
+				xVert = x + this.xPos - 1;
+				yVert = y + this.yPos;
+				tessellator.addVertexWithUV(xVert, yVert + height + 1, 0.0F, 0.0F, 1.0F);
+				xVert = x + this.xPos + width + 1;
+				yVert = y + this.yPos;
+				tessellator.addVertexWithUV(xVert, yVert + height + 1, 0.0F, 1.0F, 1.0F);
+				tessellator.addVertexWithUV(x + this.xPos + width + 1, y + this.yPos - 1, 0.0F, 1.0F, 1.0F);
+				tessellator.addVertexWithUV(x + this.xPos - 1, y + this.yPos - 1, 0.0F, 0.0F, 0.0F);
 				tessellator.draw();
-				GL11.glEnable(3553);
+				GLRenderer.popFrame();
 			}
 
 			if(this.discImageBuffer != null && this.discImage == null) {
@@ -358,9 +376,9 @@ public class DiscpackListComponent implements OptionsComponent {
 				GL11.glBindTexture(3553, ButtonComponent.mc.textureManager.loadTexture("/assets/custommusicdiscs/textures/item/disc_placeholder.png").id());
 			}
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GLRenderer.setColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			tessellator.startDrawingQuads();
-			tessellator.setColorOpaque_I(0xFFFFFF);
+			tessellator.setColorOpaque1i(0xFFFFFF);
 			tessellator.addVertexWithUV(x + this.xPos, y + this.yPos + height, 0.0, 0.0, 1.0);
 			tessellator.addVertexWithUV(x + this.xPos + height, y + this.yPos + height, 0.0, 1.0, 1.0);
 			tessellator.addVertexWithUV(x + this.xPos + height, y + this.yPos, 0.0, 1.0, 0.0);
@@ -381,7 +399,8 @@ public class DiscpackListComponent implements OptionsComponent {
 				displayText = temp + " - " + displayText;
 			}
 
-			fontRenderer.drawString(displayText, x + this.xPos + height + 2, y + this.yPos + 1, 0xFFFFFF);
+			FontRenderer fontRenderer = ButtonComponent.mc.font;
+			fontRenderer.render(displayText, x + this.xPos + height + 2, y + this.yPos + 1).call();
 
 			if (this.isHovered(mouseX, mouseY, width) && component.draggedButton == null) {
 				this.button.drawButton(ButtonComponent.mc, mouseX + x, mouseY + y);

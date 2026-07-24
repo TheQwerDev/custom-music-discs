@@ -3,6 +3,7 @@ package theqwerdev.custommusicdiscs.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.SwitchElement;
 import net.minecraft.client.gui.options.components.ButtonComponent;
+import net.minecraft.client.render.window.CursorShape;
 import net.minecraft.core.lang.I18n;
 import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.mixin.interfaces.ConfigHandlerPropertiesAccessor;
@@ -17,7 +18,7 @@ public class ConfigBooleanOptionComponent extends ButtonComponent {
 	private final SwitchElement button;
 
 	public ConfigBooleanOptionComponent(String translationKey, String optionName) {
-		super(translationKey);
+		super(translationKey, null);
 		this.optionName = optionName;
 		this.button = new SwitchElement(0, 0, 0, 150, 20, false, "", "");
 		this.button.setOn(ModConfig.config.getBoolean(optionName));
@@ -66,5 +67,8 @@ public class ConfigBooleanOptionComponent extends ButtonComponent {
 		this.button.width = buttonWidth;
 		this.button.height = buttonHeight;
 		this.button.drawButton(mc, x + relativeMouseX, y + relativeMouseY);
+		if (relativeMouseX >= relativeButtonX && relativeMouseX < relativeButtonX + buttonWidth && relativeMouseY >= relativeButtonY && relativeButtonY < relativeButtonY + buttonHeight) {
+			mc.currentScreen.setDesiredCursor(CursorShape.HAND);
+		}
 	}
 }
