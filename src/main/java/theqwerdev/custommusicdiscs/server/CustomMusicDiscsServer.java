@@ -6,6 +6,8 @@ import theqwerdev.custommusicdiscs.config.ModConfig;
 import theqwerdev.custommusicdiscs.item.ItemCustomRecord;
 import theqwerdev.custommusicdiscs.item.ModDiscs;
 import turniplabs.halplibe.helper.ItemBuilder;
+import turniplabs.halplibe.helper.creativeInventory.CreativeInventoryCategory;
+import turniplabs.halplibe.helper.creativeInventory.CreativeInventoryPlacement;
 
 public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 	@Override
@@ -13,6 +15,7 @@ public class CustomMusicDiscsServer implements DedicatedServerModInitializer {
 		ModConfig.initConfig(true);
 		for(int i = 0; i < ModDiscs.maxDiscCount; i++) {
 			new ItemBuilder(CustomMusicDiscsClient.MOD_ID)
+				.setCreativeInventoryPlacement(new CreativeInventoryPlacement.Category(CreativeInventoryCategory.MISCELLANEOUS))
     			.build(new ItemCustomRecord("record.custom" + (i + 1),
 					CustomMusicDiscsClient.MOD_ID + ":item/record_custom" + (i + 1),
 					ModConfig.itemID + i,

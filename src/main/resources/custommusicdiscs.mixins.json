@@ -8,11 +8,11 @@
     "MobCreeperMixin",
     "WorldFeatureDungeonMixin",
     "WorldFeatureLabyrinthMixin",
-    "MinecraftMixin",
     "interfaces.ConfigHandlerPropertiesAccessor"
   ],
   "client": [
     "ScreenOptionsMixin",
+    "MinecraftMixin",
     "SoundEngineMixin"
   ],
   "injectors": {

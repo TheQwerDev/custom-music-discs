@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public class CustomMusicDiscsClient implements ClientModInitializer {
-    public static final String MOD_ID = HalpLibe.registerMod("custommusicdiscs");
+    public static final String MOD_ID = "custommusicdiscs";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	public static void afterClientStart() {
@@ -51,11 +51,12 @@ public class CustomMusicDiscsClient implements ClientModInitializer {
 
 	@Override
     public void onInitializeClient() {
-		ClientEvents.AFTER_CLIENT_START.listen(Key.of(MOD_ID), CustomMusicDiscsClient::afterClientStart);
 		ModConfig.initConfig(false);
+		HalpLibe.registerMod(MOD_ID);
 		ResourcePackGenerator.initializeTexturePackPath();
 		SoundRepository.namespaceAdded(MOD_ID); //registerNamespace
 		ModDiscs.initializeItems();
+		ClientEvents.AFTER_CLIENT_START.listen(Key.of(MOD_ID), CustomMusicDiscsClient::afterClientStart);
 		ClientEvents.ITEM_MODEL_RELOAD.listen(Key.of(MOD_ID), CustomMusicDiscsClient::initItemModels);
 		LOGGER.info("Custom Music Discs initialized.");
 	}
